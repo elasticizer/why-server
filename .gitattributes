@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+*.css diff=css
+*.db diff=sqlite3
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
+*.phtml diff=php
+
+/.vscode export-ignore

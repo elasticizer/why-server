@@ -1,0 +1,83 @@
+{
+	"css.format.maxPreserveNewLines": 1,
+	"css.format.spaceAroundSelectorSeparator": true,
+
+	"editor.detectIndentation": false,
+	"editor.indentSize": "tabSize",
+	"editor.insertSpaces": false,
+	"editor.linkedEditing": true,
+
+	"emmet.syntaxProfiles": {
+		"html": {
+			"self_closing_tag": true
+		}
+	},
+	"emmet.variables": {
+		"lang": "zh-hant-TW"
+	},
+
+	"files.eol": "\n",
+	"files.insertFinalNewline": true,
+	"files.trimFinalNewlines": true,
+	"files.trimTrailingWhitespace": true,
+
+	"git.autofetch": true,
+	"git.autoStash": true,
+	"git.branchProtection": [
+		"main"
+	],
+	"git.countBadge": "tracked",
+	"git.defaultBranchName": "main",
+	"git.postCommitCommand": "sync",
+	"git.showPushSuccessNotification": true,
+	"git.closeDiffOnOperation": true,
+	"git.inputValidation": true,
+	"git.rebaseWhenSync": true,
+	"git.replaceTagsWhenPull": true,
+	"git.timeline.showUncommitted": true,
+	"git.useCommitInputAsStashMessage": true,
+
+	"html.format.maxPreserveNewLines": 1,
+	"html.format.templating": true,
+	"html.format.wrapAttributes": "force-expand-multiline",
+	"html.format.wrapLineLength": 0,
+
+	"javascript.preferences.quoteStyle": "single",
+
+	"json.format.keepLines": true,
+
+	"livePreview.autoRefreshPreview": "On Changes to Saved Files",
+	"livePreview.httpHeaders": {
+		"Accept-Ranges": "bytes"
+	},
+
+	"php.format.codeStyle": "K&R",
+
+	"prettier.jsxSingleQuote": true,
+	"prettier.singleAttributePerLine": true,
+	"prettier.useTabs": true,
+	"prettier.vueIndentScriptAndStyle": true,
+
+	"sqltools.format": {
+		"linesBetweenQueries": "preserve",
+		"reservedWordCase": "upper"
+	},
+	"sqltools.useNodeRuntime": true,
+
+	"typescript.preferences.quoteStyle": "single",
+
+	"todo-tree.general.tags": [
+		"BUG",
+		"HACK",
+		"FIXME",
+		"TODO",
+		"XXX",
+		"[ ]",
+		"[x]",
+		"!!!"
+	],
+	"todo-tree.general.showActivityBarBadge": true,
+	"todo-tree.regex.subTagRegex": "^<(.*)>",
+	"todo-tree.tree.groupedByTag": true,
+	"todo-tree.tree.scanMode": "workspace"
+}
