@@ -7,11 +7,24 @@ require '../arranger.php';
 $page = $_GET['page'] ?? 1;
 $limit = 10;
 $start = $limit * ($page - 1);
-$columns = [];
+$columnsName = [
+	'編號',
+	'標題',
+	'教師',
+	'現價*',
+	'上架狀態',
+	'促銷狀態*',
+	'售出數量*',
+	'操作',
+	'編輯',
+];
+$columns = [
+	'SN', 'Name', 'Intro', 'Syllabus', 'Price', 'WhenApplied',	'WhenLaunched', 'TeacherSN', 'DomainSN', 'ApproverSN',
+];
 $statement = connect()->prepare(
 	sprintf(
-		"SELECT %s FROM Staff LIMIT ?, ?",
-		implode(', ', $columns)
+		"SELECT %s FROM Course LIMIT ?, ?",
+		implode(',', $columns)
 	)
 );
 
@@ -21,7 +34,7 @@ include find('./component/sidebar.php');
 ?>
 
 <div class="body-wrapper">
-<?php include find('./component/header.php') ?>
+	<?php include find('./component/header.php') ?>
 
 	<div class="container-fluid">
 		<div class="row">
@@ -33,7 +46,7 @@ include find('./component/sidebar.php');
 							<table class="table text-nowrap mb-0 align-middle">
 								<thead class="text-dark fs-4">
 									<tr>
-										<?php foreach ($columns as $column) : ?>
+										<?php foreach ($columnsName as $column) : ?>
 											<th class="border-bottom-0 fw-semibold mb-0"><?= $column ?></th>
 										<?php endforeach ?>
 									</tr>
