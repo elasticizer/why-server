@@ -1,17 +1,22 @@
 <?php
-$title = 'Article';
+$title = '文章';
 $layout = './layout/layout.php';
 
 require '../arranger.php';
 
-$page = $_GET['page'] ?? 1;
+$page = intval($_GET['page'] ?? 1);
+$table = 'Article';
+$total = connect()->query("SELECT COUNT(*) FROM {$table}")->fetch()[0];
 $limit = 10;
+$pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
+
 $columns = ['SN', 'Identifier', 'Title', 'WhenCreated', 'WhenLastEdited'];
 $statement = connect()->prepare(
 	sprintf(
-		"SELECT %s FROM Article LIMIT ?, ?",
-		implode(', ', $columns)
+		"SELECT %s AS Count FROM %s LIMIT ?, ?",
+		implode(', ', $columns),
+		$table
 	)
 );
 
@@ -34,16 +39,28 @@ include find('./component/sidebar.php');
 						<!-- 分頁功能 -->
 						<nav aria-label="...">
 							<ul class="pagination">
-								<li class="page-item disabled">
-									<a class="page-link">Previous</a>
+								<li class="page-item ">
+									<a class="page-link <?= $page > 1 ? '' : 'disabled' ?>" href="?page=1">
+										<i data-feather="chevrons-left"></i>
+									</a>
 								</li>
-								<li class="page-item"><a class="page-link" href="#">1</a></li>
+								<?php if ($page > 1) : ?>
+									<li class="page-item">
+										<a class="page-link" href="?page=<?= $page - 1 ?>"><?= $page - 1 ?></a>
+									</li>
+								<?php endif ?>
 								<li class="page-item active" aria-current="page">
-									<a class="page-link" href="#">2</a>
+									<a class="page-link" href="?page=<?= $page ?>"><?= $page ?></a>
 								</li>
-								<li class="page-item"><a class="page-link" href="#">3</a></li>
+								<?php if ($page < $pages) : ?>
+									<li class="page-item">
+										<a class="page-link" href="?page=<?= $page + 1 ?>"><?= $page + 1 ?></a>
+									</li>
+								<?php endif ?>
 								<li class="page-item">
-									<a class="page-link" href="#">Next</a>
+									<a class="page-link <?= $page < $pages ? '' : 'disabled' ?>" href="?page=<?= $pages ?>">
+										<i data-feather="chevrons-right"></i>
+									</a>
 								</li>
 							</ul>
 						</nav>
