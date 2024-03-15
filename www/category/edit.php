@@ -16,12 +16,13 @@ include find('./component/sidebar.php');
 				<form>
 					<div class="mb-3">
 						<label for="categoryName" class="form-label">分類名稱</label>
-						<input type="text" class="form-control" id="categoryName" aria-describedby="emailHelp">
-						<div class="mb-3">
-							<label for="categoryIntro" class="form-label">簡介</label>
-							<textarea type="text" class="form-control" id="categoryIntro"></textarea>
-						</div>
-						<button type="submit" class="btn btn-primary">確定<?= $title ?></button>
+						<input type="text" class="form-control" id="categoryName">
+					</div>
+					<div class="mb-3">
+						<label for="categoryIntro" class="form-label">簡介</label>
+						<textarea type="text" class="form-control" id="categoryIntro"></textarea>
+					</div>
+					<button type="submit" class="btn btn-primary">確定<?= $title ?></button>
 				</form>
 			</div>
 		</div>
