@@ -1,8 +1,21 @@
 <?php
-$title = (isset($_GET['sn']) ? '編輯' : '新增') . '職員';
+$title = (isset($_GET['sn']) ? '編輯' : '新增') . '文章';
 $layout = './layout/layout.php';
-
 require '../arranger.php';
+
+$sn = isset($_GET['sn']) ? intval($_GET['sn']) : 0;
+
+if (!empty($sn)) {
+	$statement = connect()->prepare("SELECT * FROM Article WHERE SN=?");
+	$statement->execute([$_GET['sn']]);
+	$row = $statement->fetch(PDO::FETCH_ASSOC);
+};
+
+
+
+
+
+
 include find('./component/sidebar.php');
 ?>
 
@@ -13,49 +26,20 @@ include find('./component/sidebar.php');
 		<div class="card">
 			<div class="card-body">
 				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
-				<form>
+				<form name="form1" action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
 					<div class="mb-3">
-						<label
-							for="exampleInputEmail1"
-							class="form-label"
-						>Email address</label>
-						<input
-							type="email"
-							class="form-control"
-							id="exampleInputEmail1"
-							aria-describedby="emailHelp"
-						>
-						<div
-							id="emailHelp"
-							class="form-text"
-						>We'll never share your email with anyone else.</div>
+						<label for="Identifier" class="form-label">識別碼</label>
+						<input type="text" class="form-control" id="Identifier" name='Identifier' value='<?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>'>
 					</div>
 					<div class="mb-3">
-						<label
-							for="exampleInputPassword1"
-							class="form-label"
-						>Password</label>
-						<input
-							type="password"
-							class="form-control"
-							id="exampleInputPassword1"
-						>
+						<label for="Title" class="form-label">標題</label>
+						<input type="text" class="form-control" id="Title" name='Title' value='<?= isset($_GET['sn']) ? $row['Title'] : "" ?>'>
 					</div>
-					<div class="mb-3 form-check">
-						<input
-							type="checkbox"
-							class="form-check-input"
-							id="exampleCheck1"
-						>
-						<label
-							class="form-check-label"
-							for="exampleCheck1"
-						>Check me out</label>
+					<div class="mb-3">
+						<label for="Content" class="form-label">文章內容</label>
+						<input type="text" class="form-control d-flex " id="Content" name='Content' value='<?= isset($_GET['sn']) ? $row['Content'] : "" ?>'>
 					</div>
-					<button
-						type="submit"
-						class="btn btn-primary"
-					>提交表單</button>
+					<button type="submit" class="btn btn-primary"><?= isset($_GET['sn']) ? '修改' : '提交表單' ?></button>
 				</form>
 			</div>
 		</div>
