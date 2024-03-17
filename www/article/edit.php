@@ -1,5 +1,4 @@
 <?php
-
 $title = (isset($_GET['sn']) ? '編輯' : '新增') . '文章';
 $layout = './layout/layout.php';
 require '../arranger.php';

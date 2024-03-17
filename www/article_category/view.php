@@ -1,17 +1,17 @@
 <?php
-$title = '文章';
+$title = '文章分類';
 $layout = './layout/layout.php';
 
 require '../arranger.php';
 
 $page = intval($_GET['page'] ?? 1);
-$table = 'Article';
+$table = 'ArticleCategory';
 $total = connect()->query("SELECT COUNT(*) FROM {$table}")->fetch()[0];
 $limit = 10;
 $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 
-$columns = ['SN', 'Identifier', 'Title'];
+$columns = ['ArticleSN', 'CategorySN'];
 $statement = connect()->prepare(
 	sprintf(
 		"SELECT %s AS Count FROM %s LIMIT ?, ?",
@@ -21,6 +21,7 @@ $statement = connect()->prepare(
 );
 
 $statement->execute([$start, $limit]);
+
 
 include find('./component/sidebar.php');
 ?>
@@ -72,7 +73,6 @@ include find('./component/sidebar.php');
 
 
 
-
 						<div class="table-responsive">
 							<table class="table text-nowrap mb-0 align-middle">
 								<thead class="text-dark fs-4">
@@ -90,9 +90,9 @@ include find('./component/sidebar.php');
 											<?php foreach ($row as $column) : ?>
 												<td class="border-bottom-0 mb-0"><?= $column ?></td>
 											<?php endforeach ?>
-											<td class="border-bottom-0 mb-0"><a href="delete.php?sn=<?= $row['SN'] ?>" class="btn btn-danger m-1">刪除</a>
+											<td class="border-bottom-0 mb-0"> <a href="delete.php?ArticleSN=<?= $row['ArticleSN'] ?>" class="btn btn-danger m-1">刪除</a>
 											</td>
-											<td class="border-bottom-0 mb-0"><a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-info m-1">編輯</a></td>
+											<td class="border-bottom-0 mb-0"><a href="edit.php?ArticleSN=<?= $row['ArticleSN'] ?>" class="btn btn-info m-1">編輯</a></td>
 										</tr>
 									<?php endwhile ?>
 								</tbody>
