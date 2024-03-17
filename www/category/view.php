@@ -6,6 +6,8 @@ require '../arranger.php';
 
 $page = $_GET['page'] ?? 1;
 $limit = 10;
+$total = connect()->query("SELECT COUNT(*) FROM category")->fetch()[0];
+$pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 $columns = ['SN', 'Name', 'Intro', 'Implicit', 'WhenCreated', 'WhenLastEdited
 ', 'ParentSN', 'CreatorSN'];
@@ -15,6 +17,8 @@ $statement = connect()->prepare(
 		implode(', ', $columns)
 	)
 );
+
+
 
 $statement->execute([$start, $limit]);
 
@@ -30,6 +34,35 @@ include find('./component/sidebar.php');
 				<div class="card w-100">
 					<div class="card-body p-4">
 						<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
+						<!-- 分頁功能 -->
+						<nav>
+							<ul class="pagination justify-content-center">
+								<li class="page-item ">
+									<a class="page-link <?= $page > 1 ? '' : 'disabled' ?>" href="?page=1">
+										<i data-feather="chevrons-left"></i>
+									</a>
+								</li>
+								<?php if ($page > 1) : ?>
+									<li class="page-item">
+										<a class="page-link" href="?page=<?= $page - 1 ?>"><?= $page - 1 ?></a>
+									</li>
+								<?php endif ?>
+								<li class="page-item active" aria-current="page">
+									<a class="page-link" href="?page=<?= $page ?>"><?= $page ?></a>
+								</li>
+								<?php if ($page < $pages) : ?>
+									<li class="page-item">
+										<a class="page-link" href="?page=<?= $page + 1 ?>"><?= $page + 1 ?></a>
+									</li>
+								<?php endif ?>
+								<li class="page-item">
+									<a class="page-link <?= $page < $pages ? '' : 'disabled' ?>" href="?page=<?= $pages ?>">
+										<i data-feather="chevrons-right"></i>
+									</a>
+								</li>
+							</ul>
+						</nav>
+
 						<div class="table-responsive">
 							<table class="table text-nowrap mb-0 align-middle">
 								<thead class="text-dark fs-4">
