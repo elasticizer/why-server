@@ -4,6 +4,13 @@ $layout = './layout/layout.php';
 
 require '../arranger.php';
 include find('./component/sidebar.php');
+
+if (isset($_GET['sn'])) {
+	$statement = connect()->prepare("SELECT * FROM Coupon WHERE sn=?");
+	$statement->execute([$_GET['sn']]);
+	$row = $statement->fetch(PDO::FETCH_ASSOC);
+}
+
 ?>
 
 <div class="body-wrapper">
@@ -13,75 +20,40 @@ include find('./component/sidebar.php');
 		<div class="card">
 			<div class="card-body">
 				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
-				<form>
+				<form action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
+					<!-- SN -->
 					<div class="mb-3">
-						<label
-							for="couponName"
-							class="form-label"
-						>優惠券名稱</label>
-						<input
-							type="email"
-							class="form-control"
-							id="couponName"
-							aria-describedby="emailHelp"
-						>
-						<div
-							id="emailHelp"
-							class="form-text"
-						>We'll never share your email with anyone else.</div>
+						<label for="Name" class="form-label">優惠券序號</label>
+						<input type="text" class="form-control" id="SN" name="SN" value="<?= isset($_GET['sn']) ? $row['SN'] : "" ?>" readonly>
+					</div>
+					<!-- Name -->
+					<div class="mb-3">
+						<label for="Name" class="form-label">優惠券名稱</label>
+						<input type="text" class="form-control" id="Name" name="Name" value="<?= isset($_GET['sn']) ? $row['Name'] : "" ?>">
 					</div>
 					<!-- Explanation -->
 					<div class="mb-3">
-						<label
-							for="couponInputExplanation"
-							class="form-label"
-						>說明</label>
-						<input
-							type="text"
-							class="form-control"
-							id="couponInputExplanation"
-						>
+						<label for="Explanation" class="form-label">說明</label>
+						<div class="form-floating">
+							<textarea class="form-control" placeholder="Leave a comment here" id="Explanation" name="Explanation"><?= isset($_GET['sn']) ? $row['Explanation'] : "" ?></textarea>
+							<label for="Explanation">請輸入優惠券說明</label>
+						</div>
 					</div>
 					<!-- DiscountRate -->
 					<div class="mb-3">
-						<label
-							for="couponInputDiscountRate"
-							class="form-label"
-						>折扣</label>
-						<input
-							type="number"
-							class="form-control"
-							id="couponInputDiscountRate"
-							min="0" max="100" step="10"
-						>
+						<label for="DiscountRate" class="form-label">折扣</label>
+						<div class="input-group mb-3">
+							<input type="number" class="form-control" placeholder="請輸入折扣比率10-90% (例：9折請輸入90)" min="10" max="90" step="10" id="DiscountRate" name="DiscountRate" value="<?= isset($_GET['sn']) ? $row['DiscountRate'] : "" ?>">
+							<span class="input-group-text">%</span>
+						</div>
 					</div>
 					<!-- WhenEnded -->
 					<div class="mb-3">
-						<label
-							for="couponInputWhenEnded"
-							class="form-label"
-						>結束時間</label>
-						<input
-							type="date"
-							class="form-control"
-							id="couponInputWhenEnded"
-						>
+						<label for="WhenEnded" class="form-label">結束時間</label>
+						<input type="date" class="form-control" id="WhenEnded" name="WhenEnded" value="<?= isset($_GET['sn']) ? $row['WhenEnded'] : "" ?>">
 					</div>
-					<div class="mb-3 form-check">
-						<input
-							type="checkbox"
-							class="form-check-input"
-							id="couponCheck1"
-						>
-						<label
-							class="form-check-label"
-							for="couponCheck1"
-						>Check me out</label>
-					</div>
-					<button
-						type="submit"
-						class="btn btn-primary"
-					>提交表單</button>
+
+					<button type="submit" class="btn btn-primary"><?= isset($_GET['sn']) ? '確定修改' : '確定新增' ?></button>
 				</form>
 			</div>
 		</div>
