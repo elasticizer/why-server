@@ -1,4 +1,5 @@
 <?php
+
 $title = (isset($_GET['sn']) ? '編輯' : '新增') . '文章';
 $layout = './layout/layout.php';
 require '../arranger.php';
@@ -10,11 +11,6 @@ if (!empty($sn)) {
 	$statement->execute([$_GET['sn']]);
 	$row = $statement->fetch(PDO::FETCH_ASSOC);
 };
-
-
-
-
-
 
 include find('./component/sidebar.php');
 ?>
@@ -35,10 +31,16 @@ include find('./component/sidebar.php');
 						<label for="Title" class="form-label">標題</label>
 						<input type="text" class="form-control" id="Title" name='Title' value='<?= isset($_GET['sn']) ? $row['Title'] : "" ?>'>
 					</div>
-					<div class="mb-3">
-						<label for="Content" class="form-label">文章內容</label>
-						<input type="text" class="form-control d-flex " id="Content" name='Content' value='<?= isset($_GET['sn']) ? $row['Content'] : "" ?>'>
-					</div>
+					<?php if (isset($_GET['sn'])) : ?>
+						<div class="mb-3">
+							<label class="form-label">建立時間</label>
+							<input type="text" class="form-control" value="<?= localize($row['WhenCreated']) ?>" disabled>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">最後更新時間</label>
+							<input type="text" class="form-control" value="<?= localize($row['WhenLastEdited']) ?>" disabled>
+						</div>
+					<?php endif ?>
 					<button type="submit" class="btn btn-primary"><?= isset($_GET['sn']) ? '修改' : '提交表單' ?></button>
 				</form>
 			</div>

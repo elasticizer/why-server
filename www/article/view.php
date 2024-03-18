@@ -90,9 +90,10 @@ include find('./component/sidebar.php');
 											<?php foreach ($row as $column) : ?>
 												<td class="border-bottom-0 mb-0"><?= $column ?></td>
 											<?php endforeach ?>
-											<td class="border-bottom-0 mb-0"><a href="delete.php?sn=<?= $row['SN'] ?>" class="btn btn-danger m-1">刪除</a>
+											<td class="border-bottom-0 mb-0">
+												<a href="delete.php?sn=<?= $row['SN'] ?>" class="btn btn-danger m-1">刪除</a>
+												<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-info m-1">編輯</a>
 											</td>
-											<td class="border-bottom-0 mb-0"><a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-info m-1">編輯</a></td>
 										</tr>
 									<?php endwhile ?>
 								</tbody>
