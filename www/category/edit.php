@@ -23,6 +23,10 @@ include find('./component/sidebar.php');
 			<div class="card-body">
 				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
 				<form name="form1" action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
+					<div class="mb-3 <?= isset($_GET['sn']) ? '' : 'd-none' ?>">
+						<label for="categoryName" class="form-label">SN</label>
+						<input type="text" class="form-control" id="sn" name="sn" value="<?= $row['SN'] ?>" disabled>
+					</div>
 					<div class="mb-3">
 						<label for="categoryName" class="form-label">分類名稱</label>
 						<input type="text" class="form-control" id="categoryName" name="name" value="<?= isset($_GET['sn']) ? $row['Name'] : '' ?>">
@@ -30,6 +34,14 @@ include find('./component/sidebar.php');
 					<div class="mb-3">
 						<label for="categoryIntro" class="form-label">簡介</label>
 						<textarea type="text" class="form-control" id="categoryIntro" name="intro"><?= isset($_GET['sn']) ? $row['Intro'] : "" ?></textarea>
+					</div>
+					<div class="mb-3 <?= isset($_GET['sn']) ? '' : 'd-none' ?>">
+						<label for="whenCreated" class="form-label">WhenCreated</label>
+						<input type="text" class="form-control" id="whenCreated" name="whenCreated" value="<?=$row['WhenCreated']?>" disabled>
+					</div>
+					<div class="mb-3 <?= isset($_GET['sn']) ? '' : 'd-none' ?>">
+						<label for="whenLastEdited" class="form-label">WhenLastEdited</label>
+						<input type="text" class="form-control" id="whenCreated" name="whenLastEdited" value="<?=$row['WhenLastEdited']?>" disabled>
 					</div>
 					<div class="mb-3 form-check">
 						<input type="checkbox" class="form-check-input" id="exampleCheck1" name="checkbox">
