@@ -23,6 +23,12 @@ include find('./component/sidebar.php');
 			<div class="card-body">
 				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
 				<form name="form1" action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
+				<?php if(isset($_GET['sn'])): ?>
+				<div class="mb-3">
+						<label for="SN" class="form-label">SN</label>
+						<input type="text" class="form-control disabled" id="Identifier" name="SN" value="<?= isset($_GET['sn']) ? $row['SN'] : '' ?>" disabled>
+					</div>
+					<?php endif ?>
 					<div class="mb-3">
 						<label for="Identifier" class="form-label">識別碼</label>
 						<input type="text" class="form-control" id="Identifier" name='Identifier' value='<?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>'>
