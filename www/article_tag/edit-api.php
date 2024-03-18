@@ -8,4 +8,4 @@ require '../arranger.php';
 
 
 $statement = connect()->prepare("UPDATE `ArticleTag` SET `ArticleSN`=?, `TagSN`=? WHERE `ArticleSN`=?");
-$statement->execute([$_POST['ArticleSN'], $_POST['TagSN'], $_POST['ArticleSN']]);
+$statement->execute([$_POST['ArticleSN'], $_POST['TagSN'], $_GET['ArticleSN']]);
