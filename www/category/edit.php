@@ -12,6 +12,8 @@ if (!empty($sn)) {
 	$row = $statement->fetch(PDO::FETCH_ASSOC);
 };
 
+$all = connect()->query('SELECT * FROM `Category`');
+
 include find('./component/sidebar.php');
 ?>
 
@@ -35,17 +37,28 @@ include find('./component/sidebar.php');
 						<label for="categoryIntro" class="form-label">簡介</label>
 						<textarea type="text" class="form-control" id="categoryIntro" name="intro"><?= isset($_GET['sn']) ? $row['Intro'] : "" ?></textarea>
 					</div>
-					<div class="mb-3 <?= isset($_GET['sn']) ? '' : 'd-none' ?>">
-						<label for="whenCreated" class="form-label">WhenCreated</label>
-						<input type="text" class="form-control" id="whenCreated" name="whenCreated" value="<?=$row['WhenCreated']?>" disabled>
+					<div class="mb-3">
+						<label for="parent" class="form-label">父類別</label>
+						<input list="parents" name="parent" id="parent" class="form-control" value="<?= isset($_GET['sn']) ? $row['ParentSN'] : "" ?>">
+						<datalist id="parents">
+							<?php while ($r = $all->fetch(PDO::FETCH_ASSOC)): ?>
+								<option value="<?= $r['SN'] ?>"><?= $r['Name'] ?></option>
+							<?php endwhile ?>
+						</datalist>
 					</div>
-					<div class="mb-3 <?= isset($_GET['sn']) ? '' : 'd-none' ?>">
-						<label for="whenLastEdited" class="form-label">WhenLastEdited</label>
-						<input type="text" class="form-control" id="whenCreated" name="whenLastEdited" value="<?=$row['WhenLastEdited']?>" disabled>
-					</div>
+					<?php if (isset($_GET['sn'])) : ?>
+						<div class="mb-3">
+							<label for="whenCreated" class="form-label">建立時間</label>
+							<input type="text" class="form-control" id="whenCreated" name="whenCreated" value="<?= localize($row['WhenCreated']) ?>" disabled>
+						</div>
+						<div class="mb-3">
+							<label for="whenLastEdited" class="form-label">最後編輯時間</label>
+							<input type="text" class="form-control" id="whenCreated" name="whenLastEdited" value="<?= localize($row['WhenLastEdited']) ?>" disabled>
+						</div>
+					<?php endif ?>
 					<div class="mb-3 form-check">
 						<input type="checkbox" class="form-check-input" id="exampleCheck1" name="checkbox">
-						<label class="form-check-label" for="exampleCheck1"><?= isset($_GET['sn']) ? '確定修改' : '確定新增' ?></label>
+						<label class="form-check-label" for="exampleCheck1">隱藏</label>
 					</div>
 					<button type="submit" class="btn btn-primary"><?= isset($_GET['sn']) ? '修改' : '提交表單' ?></button>
 				</form>
