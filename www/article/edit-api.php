@@ -8,4 +8,4 @@ header('Location: view.php');
 
 
 $statement = connect()->prepare("UPDATE `Article` SET `Identifier`=?,`Title`=?,`Content`=?,`AuthorSN`=1 WHERE `SN`=?");
-$statement->execute([$_POST['Identifier'], $_POST['Title'], $_POST['Content'], $_GET['sn']]);
+$statement->execute([$_POST['Identifier'], $_POST['Title'], $_POST['Content'], $_POST['sn']]);
