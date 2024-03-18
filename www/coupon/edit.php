@@ -22,10 +22,12 @@ if (isset($_GET['sn'])) {
 				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
 				<form action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
 					<!-- SN -->
+					<?php if(isset($_GET['sn'])) : ?>
 					<div class="mb-3">
 						<label for="Name" class="form-label">優惠券序號</label>
 						<input type="text" class="form-control" id="SN" name="SN" value="<?= isset($_GET['sn']) ? $row['SN'] : "" ?>" readonly>
 					</div>
+					<?php endif; ?>
 					<!-- Name -->
 					<div class="mb-3">
 						<label for="Name" class="form-label">優惠券名稱</label>
@@ -50,7 +52,10 @@ if (isset($_GET['sn'])) {
 					<!-- WhenEnded -->
 					<div class="mb-3">
 						<label for="WhenEnded" class="form-label">結束時間</label>
-						<input type="date" class="form-control" id="WhenEnded" name="WhenEnded" value="<?= isset($_GET['sn']) ? $row['WhenEnded'] : "" ?>">
+						<?php
+						$today = date("Y-m-d");
+						?>
+						<input type="date" class="form-control" id="WhenEnded" name="WhenEnded" value="<?= isset($_GET['sn']) ? $row['WhenEnded'] : $today ?>">
 					</div>
 
 					<button type="submit" class="btn btn-primary"><?= isset($_GET['sn']) ? '確定修改' : '確定新增' ?></button>
