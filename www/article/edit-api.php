@@ -1,5 +1,6 @@
 <?php
 
+
 $layout = './layout/layout.php';
 require '../arranger.php';
 
