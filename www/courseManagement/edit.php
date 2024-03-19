@@ -1,85 +1,341 @@
 <?php
-$title = (isset($_GET['sn']) ? '編輯' : '新增') . '課程';
+$title = (isset($_GET['courseID']) ? '編輯' : '新增') . '課程';
 $layout = './layout/layout.php';
+
+$page = $_GET['page'] ?? 1;
+$orderValue = $_GET['orderValue'] ?? 'SN ASC';
+$limitPerpage = $_GET['limitPerpage'] ?? 10;
+$courseID = $_GET['courseID'] ?? 0;
 
 require '../arranger.php';
 include find('./component/sidebar.php');
-?>
 
+$allDomain = connect()->query('SELECT * FROM `Domain`;')->fetchAll(PDO::FETCH_ASSOC);
+$allTeachers = connect()->query('SELECT FirstName,LastName,SN FROM `User` WHERE ApproverSN is not null;')->fetchAll(PDO::FETCH_ASSOC);
+$r = connect()->query("SELECT * FROM Course WHERE SN= $courseID")->fetch(PDO::FETCH_ASSOC);
+if (!empty($r['ThumbnailSN'])) {
+	$r_file = connect()->query("select Filename,Extension from File where SN =" . $r['ThumbnailSN'])->fetch(PDO::FETCH_ASSOC);
+	$file_path = $r_file['Filename'] . $r_file['Extension'];
+}
+
+$states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark', '<i data-feather="corner-right-down"></i>下架', '<span class="text-success" >已上架</span>'] : ['btn-warning', '<i data-feather=upload></i>上架', '已下架']) : ['btn-success', ' <i data-feather="check-circle"></i>核准', '<span class ="text-danger">未審核</span>']);
+?>
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.3/dist/quill.snow.css" rel="stylesheet" />
+<style>
+	.quillContent {
+		height: 500px;
+	}
+</style>
 <div class="body-wrapper">
 	<?php include find('./component/header.php') ?>
+	<?php if ($courseID == 0) //如果不是點編輯紐進來的就是新增
+	{
+	} else {
+	} ?>
 
 	<div class="container-fluid">
 		<div class="card">
 			<div class="card-body">
-				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
-				<form>
-					<div class="mb-3">
-						<label for="exampleInputEmail1" class="form-label">標題</label>
-						<input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-						<div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-					</div>
-					<div class="mb-3">
-						<label for="exampleInputPassword1" class="form-label">類別</label>
-						<input type="password" class="form-control" id="exampleInputPassword1">
-					</div>
-					<div class="mb-3 form-check">
-						<input type="checkbox" class="form-check-input" id="exampleCheck1">
-						<label class="form-check-label" for="exampleCheck1">Check me out</label>
-					</div>
-					<button type="submit" class="btn btn-primary">提交表單</button>
-				</form>
+				<a class="btn btn-primary me-3 " href="view.php?page=<?= $page ?>&orderValue=<?= $orderValue ?>&limitPerpage=<?= $limitPerpage ?>"><i data-feather=arrow-left></i>回到上一頁</a>
+				<?= $courseID == 0 ? '' : '<a class="btn btn-primary" href="javascript:location.reload()"><i data-feather=refresh-ccw></i>重製修改</a>' ?>
+				<h5 class="card-title fw-semibold mb-4 pt-3 "><?= $title ?></h5>
+				<div class="mb-3 hstack gap-3">
+					<?php if ($courseID != 0) : ?>
+						<label class="form-label text-nowrap">狀態</label>
+						<label class="form-control"><?= $states[2] ?></label>
 
-				<form class="createCourse rounded-5" name="createCourse" onsubmit="sendData(event)" method="post">
-					<div class="mb-3 hstack">
-						<label for="title" class="form-label me-auto">標題</label>
-						<input type="text" class="form-control" id="title" name="title">
-						<div id="Help" class="form-text text-danger"><i class="fa-solid fa-circle-exclamation"></i>必填</div>
+						<a class="btn btn-danger text-nowrap btn-lg" data-bs-toggle="modal" data-bs-target='#deleteModal' onclick="javascript:deleteCourse(<?= $r['SN'] ?>)"><i data-feather=upload></i>刪除課程</a>
+						<a class="btn btn-primary  text-nowrap btn-lg"><i data-feather=upload></i>促銷</a>
+						<!-- Button trigger modal -->
+						<a class="btn btn-lg text-nowrap <?= $states[0] ?> " onclick="javascript:approveCourse('<?= $r['SN'] ?>', '<?= isset($r['ApproverSN']) ?: 0 ?>','<?= isset($r['WhenLaunched']) ?: 0 ?>')" data-bs-toggle="modal" data-bs-target="#approveModal"><?= $states[1] ?>
+						</a>
+					<?php endif; ?>
+				</div>
+				<form name="createCourse" onsubmit="sendData(event)" method="post">
+					<?php if ($courseID != 0) : ?>
+						<div class="mb-3">
+							<label for="SN" class="form-label">編號</label>
+							<input type="text" readonly class="form-control" id="SN" name="SN" value="<?= $courseID == 0 ?: $r['SN'] ?>">
+						</div>
+					<?php endif; ?>
+
+					<div class="mb-3">
+						<label for="Name" class="form-label">標題</label>
+						<input type="text" class="form-control" id="Name" name="Name" value="<?php if ($courseID != 0) {
+																																										echo $r['Name'];
+																																									} ?>">
+						<!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
 					</div>
-					<div class="mb-3 hstack">
-						<label for="courseClassSN" class="form-label me-auto">類別</label>
-						<select class="form-select" name="courseClassSN" id="courseClassSN">
-							<?php $allCourseClass  = $pdo->query('SELECT * FROM `courseclass`;')->fetchAll(PDO::FETCH_ASSOC); ?>
-							<?php foreach ($allCourseClass as $CourseClass) : ?>
-								<option value="<?= $CourseClass['courseClassSN'] ?>"> <?= $CourseClass['className'] ?> </option>
-							<?php endforeach; ?>
+					<div class="mb-3">
+						<label for="DomainSN" class="form-label">課程類別</label>
+						<select class="form-select" name="DomainSN" id="DomainSN">
+							<?php if ($courseID == 0) : //新增
+							?>
+								<?php foreach ($allDomain as $Domain) : ?>
+									<option value="<?= $Domain['SN'] ?>"> <?= $Domain['Name'] ?> </option>
+								<?php endforeach; ?>
+							<?php endif; ?>
+							<?php if ($courseID != 0) : //編輯
+							?>
+								<option value="<?= $r['DomainSN'] ?>">
+									<?php
+									$CourseClass = connect()->query('SELECT `Name` FROM `Domain` WHERE SN=' . $r['DomainSN'] . ';')->fetch(PDO::FETCH_ASSOC);
+									echo $CourseClass['Name'] ?>
+								</option>
+
+								<?php foreach ($allDomain as $Domain) : ?>
+									<?php if ($Domain['SN'] != $r['DomainSN']) : ?>
+										<option value="<?= $Domain['SN'] ?>"> <?= $Domain['Name'] ?> </option>
+									<?php endif; ?>
+								<?php endforeach; ?>
+							<?php endif; ?>
 						</select>
 					</div>
-					<div class="mb-3 hstack">
-						<label for="intro" class="form-label me-auto">簡介</label>
-						<textarea type="text" class="form-control" id="intro" name="intro" cols="30" rows="10"></textarea>
+					<div class="mb-3">
+						<label for="Intro" class="form-label">簡介</label>
+						<textarea type="text" class="form-control" id="Intro" name="Intro" rows="3"><?php if ($courseID != 0) {
+																																													echo $r['Intro'];
+																																												} ?></textarea>
 					</div>
-					<div class="mb-3 hstack">
-						<label for="syllabus" class="form-label me-auto">課綱</label>
-						<input type="text" class="form-control" id="syllabus" name="syllabus">
+					<div class="mb-3">
+						<label for="Syllabus" class="form-label">課綱</label>
+						<textarea type="text" class="form-control" id="Syllabus" name="Syllabus" cols="30" rows="10" hidden></textarea>
+						<div id="editor" class="<?php if ($courseID != 0) {
+																			echo "d-none";
+																		} ?>">
+						</div>
+
 					</div>
-					<div class="mb-3 hstack">
-						<label for="price" class="form-label me-auto">價格</label>
-						<input type="number" class="form-control" id="price" name="price">
+					<div class="mb-3">
+						<label for="Price" class="form-label">價格</label>
+						<input type="number" class="form-control" id="Price" name="Price" value="<?php if ($courseID != 0) {
+																																												echo $r['Price'];
+																																											}; ?>">
 					</div>
-					<div class="mb-3 hstack">
-						<label for="teacherID" class="form-label me-auto">教師</label>
-						<select class="form-select" name="userID" id="teacherID">
-							<?php $allTeachers = $pdo->query('SELECT userName,userID FROM `user` WHERE isTeacher=1;')->fetchAll(PDO::FETCH_ASSOC); ?>
+					<div class="mb-3">
+						<label for="TeacherSN" class="form-label">教師</label>
+						<select class="form-select" name="TeacherSN" id="TeacherSN">
 							<?php foreach ($allTeachers as $teacher) : ?>
-								<option value="<?= $teacher['userID'] ?>"> <?= $teacher['userName'] ?> </option>
+								<option value="<?= $teacher['SN'] ?>"> <?= $teacher['LastName'] . $teacher['FirstName'] ?> </option>
 							<?php endforeach; ?>
 						</select>
 					</div>
-
-
-
-					<div class="mb-3 hstack">
-						<label for="formFile" class="hstack w-100">圖片<div class="form-control ms-auto">上傳圖片</div></label>
-						<input hidden class="form-control" type="file" id="formFile" accept="image/jpeg,image/png,image/webp" multiple="false" onchange="showTemp(event)" name="imgFile" />
-						<!-- 接受的檔案類型 -->
+					<div class="mb-3">
+						<label for="imgFile" class="form-label w-100">圖片<div class="form-control">上傳圖片</div></label>
+						<input hidden class="form-control" type="file" id="imgFile" accept="image/jpeg,image/png,image/webp" multiple="false" onchange="showTemp(event)" name="imgFile" />
+						<!-- 接受的檔案類型
+						一個隱藏的input來放原始圖片ThumbnailSN-->
+						<?php if ($courseID != 0 && !empty($r['ThumbnailSN'])) : ?>
+							<input name="ThumbnailSN" type="text" hidden value="<?= $r['ThumbnailSN'] ?>">
+						<?php endif; ?>
 					</div>
-					<div><!-- 空的img-->
-						<img src="" alt="" id="myimg" width="100%" />
+
+					<div><!-- 空的img或原始圖片-->
+						<img class="mb-3" src="<?php if ($courseID != 0) {
+																			echo (__DIR__ . "/api/files/" . $file_path);
+																		} ?>" alt="" id="myimg" width="100%" />
 					</div>
-					<button type="submit" class="btn btn-primary">新增課程</button>
+					<?php if ($courseID == 0) : ?>
+						<div class="mb-3 form-check">
+							<input type="checkbox" class="form-check-input" id="check" name="check" value="approve">
+							<label class="form-check-label" for="check">直接核准</label>
+						</div>
+					<?php endif; ?>
+					<button type="submit" class="btn btn-primary"><?= $courseID == 0 ? '新增課程' : '更改課程資料' ?></button>
 				</form>
 			</div>
 		</div>
 	</div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="approveModal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="modalTitle"></h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body" id="modalBody">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+				<a class="btn btn-primary" id="approveBtn"></a>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.3/dist/quill.js"></script>
+<script>
+	const toolbarOptions = [
+		['bold', 'italic', 'underline', 'strike'], // toggled buttons
+		['blockquote', 'code-block'],
+		['link', 'image'],
+		[{
+			'header': 1
+		}, {
+			'header': 2
+		}],
+		[{
+			'list': 'ordered'
+		}, {
+			'list': 'bullet'
+		}, {
+			'list': 'check'
+		}],
+		[{
+			'header': [1, 2, 3, 4, 5, 6, false]
+		}],
+		[{
+			'color': []
+		}],
+		[{
+			'align': ''
+		}, {
+			'align': 'center'
+		}, {
+			'align': 'right'
+		}],
+	];
+
+	let quill = new Quill('#editor', {
+		theme: 'snow',
+		modules: {
+			toolbar: toolbarOptions
+		}
+	});
+
+
+
+
+	quill.on('text-change', function(delta, oldDelta, source) {
+		if (source === 'user') {
+			let semanticHTML = quill.getSemanticHTML();
+			// console.log(semanticHTML);
+		}
+	});
+	let quillContent = document.querySelector('#editor > div');
+	// console.log(quillContent);
+	quillContent.classList.add('quillContent')
+
+	let SyllabusEl = document.querySelector('#Syllabus');
+
+	<?php if ($courseID == 0) : ?>
+		quillContent.parentElement.classList.remove('d-none');
+
+	<?php endif; ?>
+
+	<?php if ($courseID != 0) : ?>
+
+		function delay(ms) {
+			return new Promise(r => setTimeout(r, ms));
+		}
+		delay(2000).then(() => {
+			let Syllabus = '<?= $r['Syllabus']; ?>';
+			quillContent.innerHTML = Syllabus;
+			SyllabusEl.innerHTML = Syllabus;
+			let videoEL = quillContent.querySelector('iframe');
+			console.log(videoEL);
+			if (videoEL) {
+				console.log(1111);
+				videoEL.onload=(e)=>{
+					quillContent.parentElement.classList.remove('d-none');
+					console.log('22222');
+				}
+			} else {
+				quillContent.parentElement.classList.remove('d-none');
+			}
+		});
+
+
+
+	<?php endif; ?>
+</script>
+
+<script>
+	let imgFile = document.getElementById('imgFile');
+
+	function sendData(e) {
+		e.preventDefault();
+		// 防止送出表單重整
+		// log看一下editCourse表單送出的資料
+		const editCourseFD = new FormData(document.createCourse);
+		for (let i of editCourseFD.entries()) {
+			console.log(i);
+		};
+		// 發ajax
+		<?php if ($courseID != 0) : ?>
+			// 編輯
+			fetch('api/edit.php', {
+					method: "POST",
+					body: editCourseFD,
+				})
+				.then((r) => r.json())
+				.then((result) => {
+					if (result.success) {
+						alert('已修改課程');
+					} else {
+						alert("修改失敗");
+					}
+				});
+		<?php endif ?>
+		<?php if ($courseID == 0) : ?>
+			// 新增
+			fetch('api/add.php', {
+					method: "POST",
+					body: editCourseFD,
+				})
+				.then((r) => r.json())
+				.then((result) => {
+					if (result.success) {
+						alert('已新增課程');
+					} else {
+						alert("新增失敗");
+					}
+				});
+		<?php endif ?>
+	}
+
+	function showTemp(e) {
+		let selectedFile = imgFile.files[0]
+		let fr = new FileReader();
+		fr.readAsDataURL(selectedFile);
+		fr.onload = (e) => {
+			myimg.src = e.target.result;
+		}
+	}
+	let approveModal = document.getElementById('approveModal');
+	let approveBtn = document.getElementById('approveBtn');
+	let modalTitle = document.getElementById('modalTitle');
+	let modalBody = document.getElementById('modalBody');
+
+	function approveCourse(id, approver, available) {
+		console.log(id, approver, available);
+		let queryString = `?courseID=${id}&page=<?= $page ?>&orderValue=<?= $orderValue ?>&limitPerpage=<?= $limitPerpage ?>`;
+		let courseID = `課號 <span class="text-danger text-decoration-underline">${id}</span> ?`;
+		if (approver === '0') {
+			approveBtn.href = `api/approve.php${queryString}`; //跳轉到approve頁面
+			modalTitle.innerHTML = '是否核准課程';
+			modalBody.innerHTML = `操作不可逆。<br>確定核准課程 ${courseID}`;
+			approveBtn.innerHTML = '核准';
+		} else if (available !== '0') {
+			approveBtn.href = `api/launch.php${queryString}`;
+			modalTitle.innerHTML = '是否下架課程';
+			modalBody.innerHTML = `確定下架課程  ${courseID}`;
+			approveBtn.innerHTML = '下架';
+		} else {
+			approveBtn.href = `api/launch.php${queryString}`;
+			modalTitle.innerHTML = '是否上架課程';
+			modalBody.innerHTML = `確定上架課程  ${courseID}`;
+			approveBtn.innerHTML = '上架';
+		}
+	}
+
+	// function deleteCourse(id) {
+	// 	let courseID = `課號 <span class="text-danger text-decoration-underline">${id}</span> ?`;
+	// 	modalTitle.innerHTML = '是否刪除課程'
+	// 	modalBody.innerHTML = '確認刪除課程?'
+	// 	deleteBtn.innerHTML = '下架';
+	// 	href = "./api/delete.php?courseID=" + courseID + "&page=<?= $page ?>&orderValue=<?= $orderValue ?>&limitPerpage=<?= $limitPerpage ?>";
+	// }
+</script>
