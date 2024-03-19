@@ -33,8 +33,10 @@ include find('./component/sidebar.php');
 
 						<!-- 搜尋關鍵字 -->
 						<form method="GET" action="<?= $_SERVER['PHP_SELF'] ?>" class="d-flex justify-content-between mb-3">
-							<input type="text" name="keyword" placeholder="輸入關鍵字" class="form-control">
-							<button type="submit" class="btn btn-primary">搜尋</button>
+							<input type="text" name="keyword" placeholder="輸入關鍵字" class="form-control me-3">
+							<button type="submit" class="btn btn-primary">
+								<i data-feather="search"></i>
+							</button>
 						</form>
 
 						<!-- 分頁功能 -->
@@ -43,17 +45,13 @@ include find('./component/sidebar.php');
 								<ul class="pagination">
 									<li class="page-item <?= $page == 1 ? 'disabled' : '' ?>">
 										<a class="page-link" href="?page=1">
-											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" class="main-grid-item-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-												<polyline points="11 17 6 12 11 7" />
-												<polyline points="18 17 13 12 18 7" />
+											<i data-feather="chevrons-left"></i>
 											</svg>
 										</a>
 									</li>
 									<li class="page-item <?= $page == 1 ? 'disabled' : '' ?>">
 										<a class="page-link" href="?page=<?= $page - 1 ?>">
-											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" class="main-grid-item-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-												<polyline points="15 18 9 12 15 6" />
-											</svg>
+											<i data-feather="chevron-left"></i>
 										</a>
 									</li>
 									<?php for ($i = $page - 5; $i <= $page + 5; $i++) : ?>
@@ -65,33 +63,24 @@ include find('./component/sidebar.php');
 									<?php endfor ?>
 									<li class="page-item <?= $page == $pages ? 'disabled' : '' ?>">
 										<a class="page-link" href="?page=<?= $page + 1 ?>">
-											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" class="main-grid-item-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-												<polyline points="9 18 15 12 9 6" />
-											</svg>
+											<i data-feather="chevron-right"></i>
 										</a>
 									</li>
 									<li class="page-item <?= $page == $pages ? 'disabled' : '' ?>">
 										<a class="page-link" href="?page=<?= $pages ?>">
-											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" class="main-grid-item-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-												<polyline points="13 17 18 12 13 7" />
-												<polyline points="6 17 11 12 6 7" />
-											</svg>
+											<i data-feather="chevrons-right"></i>
 										</a>
 									</li>
 								</ul>
 							</nav>
 							<div>
 								<a href="./edit.php" class="btn btn-success m-1">
-									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" class="main-grid-item-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-										<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-										<polyline points="14 2 14 8 20 8" />
-										<line x1="12" x2="12" y1="18" y2="12" />
-										<line x1="9" x2="15" y1="15" y2="15" />
-									</svg>
+									<i data-feather="file-plus"></i>
 									新增</a>
 							</div>
 						</section>
 
+						<!-- 表單內容 -->
 						<div class="table-responsive">
 							<table class="table text-nowrap mb-0 align-middle">
 								<thead class="text-dark fs-4">
@@ -99,37 +88,32 @@ include find('./component/sidebar.php');
 										<?php foreach ($columns as $column) : ?>
 											<th class="border-bottom-0 fw-semibold mb-0"><?= $column ?></th>
 										<?php endforeach ?>
+										<th class="border-bottom-0 fw-semibold mb-0 text-center">刪除</th>
+										<th class="border-bottom-0 fw-semibold mb-0 text-center">編輯</th>
 									</tr>
 								</thead>
 								<tbody>
 									<?php while ($row = $statement->fetch(PDO::FETCH_ASSOC)) : ?>
 										<tr>
-											<?php foreach ($row as $column) : ?>
-												<td class="border-bottom-0 mb-0"><?= $column ?></td>
+											<?php foreach ($row as $key => $value) : ?>
+												<td class="border-bottom-0 mb-0"><?= $key === 'Implicit' ? ($value === 1 ? '是' : '否') : $value ?></td>
 											<?php endforeach ?>
 											<td class="border-bottom-0 mb-0">
 												<a href="delete.php?sn=<?= $row['SN'] ?>" class="btn btn-danger m-1">
-													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" class="main-grid-item-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-														<polyline points="3 6 5 6 21 6" />
-														<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-														<line x1="10" x2="10" y1="11" y2="17" />
-														<line x1="14" x2="14" y1="11" y2="17" />
-													</svg>
-													刪除</a>
+													<i data-feather="trash-2"></i>
+												</a>
 											</td>
 											<td class="border-bottom-0 mb-0">
 												<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-info m-1">
-													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" class="main-grid-item-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-														<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-														<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-													</svg>
-													編輯</a>
+													<i data-feather="edit"></i>
+												</a>
 											</td>
 										</tr>
 									<?php endwhile ?>
 								</tbody>
 							</table>
 						</div>
+						</form>
 					</div>
 				</div>
 			</div>
