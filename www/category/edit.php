@@ -32,16 +32,18 @@ include find('./component/sidebar.php');
 					<div class="mb-3">
 						<label for="categoryName" class="form-label">分類名稱</label>
 						<input type="text" class="form-control" id="categoryName" name="name" value="<?= isset($_GET['sn']) ? $row['Name'] : '' ?>">
+						<div></div>
 					</div>
 					<div class="mb-3">
 						<label for="categoryIntro" class="form-label">簡介</label>
 						<textarea type="text" class="form-control" id="categoryIntro" name="intro"><?= isset($_GET['sn']) ? $row['Intro'] : "" ?></textarea>
+						<div></div>
 					</div>
 					<div class="mb-3">
 						<label for="parent" class="form-label">父類別</label>
 						<input list="parents" name="parent" id="parent" class="form-control" value="<?= isset($_GET['sn']) ? $row['ParentSN'] : "" ?>">
 						<datalist id="parents">
-							<?php while ($r = $all->fetch(PDO::FETCH_ASSOC)): ?>
+							<?php while ($r = $all->fetch(PDO::FETCH_ASSOC)) : ?>
 								<option value="<?= $r['SN'] ?>"><?= $r['Name'] ?></option>
 							<?php endwhile ?>
 						</datalist>
@@ -60,9 +62,40 @@ include find('./component/sidebar.php');
 						<input type="checkbox" class="form-check-input" id="exampleCheck1" name="checkbox">
 						<label class="form-check-label" for="exampleCheck1">隱藏</label>
 					</div>
-					<button type="submit" class="btn btn-primary"><?= isset($_GET['sn']) ? '修改' : '提交表單' ?></button>
+					<button type="submit" class="btn btn-primary"><?= isset($_GET['sn']) ? '編輯完成' : '提交表單' ?></button>
 				</form>
 			</div>
 		</div>
 	</div>
 </div>
+
+<script>
+	const {
+		name: nameField,
+		intro: introField,
+	} = form1
+
+	form1.addEventListener('submit', validate);
+
+	function validate(e) {
+		e.preventDefault();
+		if (!nameField.value) {
+			nameField.nextElementSibling.innerHTML = '請輸入名稱';
+			nameField.style.border = '2px solid red';
+			return;
+		} else {
+			nameField.nextElementSibling.innerHTML = '';
+			nameField.style.border = '';
+		}
+
+		if (!introField.value) {
+			introField.nextElementSibling.innerHTML = '請輸入簡介';
+			introField.style.border = '2px solid red';
+			return;
+		} else {
+			introField.nextElementSibling.innerHTML = '';
+			introField.style.border = '';
+		}
+		form1.submit();
+	}
+</script>
