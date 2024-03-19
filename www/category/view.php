@@ -9,10 +9,10 @@ $limit = 10;
 $total = connect()->query("SELECT COUNT(*) FROM Category")->fetch()[0];
 $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
-$columns = ['SN', 'Name', 'Intro', 'Implicit', 'ParentSN', 'CreatorSN'];
+$columns = ['C1.SN', 'C1.Name', 'C1.Intro', 'C1.Implicit', 'C2.Name AS ParentName', 'Staff.FirstName'];
 $statement = connect()->prepare(
 	sprintf(
-		"SELECT %s FROM Category WHERE `Name` LIKE ? ORDER BY SN ASC LIMIT ?, ?",
+		"SELECT %s FROM Category C1 LEFT OUTER JOIN Category C2 ON C1.ParentSN = C2.SN JOIN Staff ON C1.CreatorSN = Staff.SN WHERE C1.`Name` LIKE ? ORDER BY C1.SN ASC LIMIT ?, ?",
 		implode(', ', $columns)
 	)
 );
@@ -93,9 +93,9 @@ include find('./component/sidebar.php');
 									</tr>
 								</thead>
 								<tbody>
-									<?php while ($row = $statement->fetch(PDO::FETCH_ASSOC)) : ?>
+									<?php while ($row = $statement->fetch(PDO::FETCH_ASSOC)): ?>
 										<tr>
-											<?php foreach ($row as $key => $value) : ?>
+											<?php foreach ($row as $key => $value): ?>
 												<td class="border-bottom-0 mb-0"><?= $key === 'Implicit' ? ($value === 1 ? '是' : '否') : $value ?></td>
 											<?php endforeach ?>
 											<td class="border-bottom-0 mb-0">

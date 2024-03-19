@@ -7,7 +7,7 @@ require '../arranger.php';
 $sn = isset($_GET['sn']) ? intval($_GET['sn']) : 0;
 
 if (!empty($sn)) {
-	$statement = connect()->prepare("SELECT * FROM Category WHERE SN=?");
+	$statement = connect()->prepare("SELECT * FROM Category WHERE SN = ?");
 	$statement->execute([$_GET['sn']]);
 	$row = $statement->fetch(PDO::FETCH_ASSOC);
 };
