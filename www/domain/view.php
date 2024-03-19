@@ -79,22 +79,26 @@ include find('./component/sidebar.php');
 				</li>
 			</ul>
 		</nav>
+
 		<div class="row">
 			<div class="col-lg-12 d-flex align-items-stretch">
 				<div class="card w-100">
 					<div class="card-body p-4">
-						<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
-						<div><a
+						<div class="d-flex justify-content-between">
+							<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
+							<a
 								href="./edit.php"
 								class="btn btn-primary m-1"
-							>新增</a></div>
-						<div class="table-responsive">
-							<table class="table text-nowrap mb-0 align-middle">
+							>新增</a>
+						</div>
+						<div class="table-responsive ">
+							<table class="table table-sm table-striped table-hover text-nowrap mb-0 align-middle">
 								<thead class="text-dark fs-4">
 									<tr>
 										<?php foreach (array_values($columns) as $column): ?>
 											<th class="border-bottom-0 fw-semibold mb-0"><?= $column ?></th>
 										<?php endforeach ?>
+										<th>操作</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -110,7 +114,7 @@ include find('./component/sidebar.php');
 												>編輯</a>
 												<a
 													href="delete.php?sn=<?= $row['SN'] ?>"
-													class="btn btn-outline-danger m-1 "
+													class="btn btn-outline-danger m-1"
 												><svg
 														xmlns="http://www.w3.org/2000/svg"
 														width="16"
