@@ -12,22 +12,31 @@ $output = [
 	'code' => 0,
 ];
 
-
 if (!empty($_POST['Name'])) {
+	$isPass = true;
 
-	$table = 'Coupon';
+	if (mb_strlen($_POST['Name']) < 3) {
+		$isPass = false;
+		$output['error'] = '優惠券名稱必須要三個字以上。';
+	}
 
+	$discountRate = intval($_POST['DiscountRate']);
+	if ($discountRate % 10 !== 0 || $discountRate < 10 || $discountRate > 90) {
+		$isPass = false;
+		$output['error'] = '折扣必須在 10% 到 90% 之間，間隔值為10。';
+	}
 
-	$statement = connect()->prepare("INSERT INTO {$table}
+	if ($isPass) {
+		$table = 'Coupon';
+		$statement = connect()->prepare("INSERT INTO {$table}
 	(`Name`, `Explanation`, `DiscountRate`, `WhenEnded`, `CreatorSN`) VALUES (?, ?, ?, ?, 10)");
-
-	$statement->execute([
-		$_POST['Name'],
-		$_POST['Explanation'],
-		$_POST['DiscountRate'],
-		$_POST['WhenEnded']
-	]);
-
-	$output['success'] = boolval(($statement->rowCount()));
+		$statement->execute([
+			$_POST['Name'],
+			$_POST['Explanation'],
+			$_POST['DiscountRate'],
+			$_POST['WhenEnded']
+		]);
+		$output['success'] = boolval(($statement->rowCount()));
+	}
 }
 echo json_encode($output, JSON_UNESCAPED_UNICODE);

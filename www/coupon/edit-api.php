@@ -14,18 +14,32 @@ $output = [
 
 
 if (!empty($_POST['Name'])) {
+	$isPass = true;
 
-	$table = 'Coupon';
-	$statement = connect()->prepare("UPDATE {$table} SET
+	if (mb_strlen($_POST['Name']) < 3) {
+		$isPass = false;
+		$output['error'] = '優惠券名稱必須要三個字以上。';
+	}
+
+	$discountRate = intval($_POST['DiscountRate']);
+	if ($discountRate % 10 !== 0 || $discountRate < 10 || $discountRate > 90) {
+		$isPass = false;
+		$output['error'] = '折扣必須在 10% 到 90% 之間，間隔值為10。';
+	}
+
+	if ($isPass) {
+		$table = 'Coupon';
+		$statement = connect()->prepare("UPDATE {$table} SET
 	`Name`=?,`Explanation`=?,`DiscountRate`=?,`WhenEnded`=? WHERE `SN`=?");
-	$statement->execute([
-		$_POST['Name'],
-		$_POST['Explanation'],
-		$_POST['DiscountRate'],
-		$_POST['WhenEnded'],
-		$_POST['SN']
-	]);
+		$statement->execute([
+			$_POST['Name'],
+			$_POST['Explanation'],
+			$_POST['DiscountRate'],
+			$_POST['WhenEnded'],
+			$_POST['SN']
+		]);
 
-	$output['success'] = boolval(($statement->rowCount()));
+		$output['success'] = boolval(($statement->rowCount()));
+	}
 }
 echo json_encode($output, JSON_UNESCAPED_UNICODE);

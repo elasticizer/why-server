@@ -24,6 +24,7 @@ if (isset($_GET['sn'])) {
 	<?php include find('./component/header.php') ?>
 
 	<div class="container-fluid">
+
 		<div class="card">
 			<div class="card-body">
 				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
@@ -53,7 +54,7 @@ if (isset($_GET['sn'])) {
 					<div class="mb-3">
 						<label for="DiscountRate" class="form-label">折扣</label>
 						<div class="input-group mb-3">
-							<input type="number" class="form-control" placeholder="請輸入折扣比率10-90%" step="10" id="DiscountRate" name="DiscountRate" value="<?= isset($_GET['sn']) ? $row['DiscountRate'] : "" ?>">
+							<input type="number" class="form-control" placeholder="請輸入折扣比率10-90%" id="DiscountRate" name="DiscountRate" value="<?= isset($_GET['sn']) ? $row['DiscountRate'] : "" ?>">
 							<span class="input-group-text">%</span>
 						</div>
 						<div class="form-text" id="discountError"></div>
@@ -73,8 +74,10 @@ if (isset($_GET['sn'])) {
 
 			</div>
 		</div>
+
 	</div>
 </div>
+
 
 <script>
 	document.addEventListener('DOMContentLoaded', () => {
@@ -89,7 +92,7 @@ if (isset($_GET['sn'])) {
 		// Name
 		nameInput.addEventListener('input', () => {
 			if (nameInput.value.length < 3) {
-				nameError.textContent = '優惠券名稱必須要三個字以上';
+				nameError.textContent = '優惠券名稱必須要三個字以上。';
 				nameError.classList.add('isInvalid');
 				nameInput.style.border = "1px solid red";
 			} else {
@@ -98,11 +101,13 @@ if (isset($_GET['sn'])) {
 				nameInput.style.border = "1px solid #CCC";
 			}
 		});
+
+		// Explanation 可填可不填
 		// Discount
 		discountInput.addEventListener('input', function() {
 			const discount = parseInt(discountInput.value);
 			if (isNaN(discount) || discount % 10 !== 0 || discount < 10 || discount > 90) {
-				discountError.textContent = '折扣必須在 10% 到 90% 之間';
+				discountError.textContent = '折扣必須在 10% 到 90% 之間，間隔值為10。';
 				discountError.classList.add('isInvalid');
 				discountInput.style.border = "1px solid red";
 			} else {
@@ -111,12 +116,13 @@ if (isset($_GET['sn'])) {
 				discountInput.style.border = "1px solid #CCC";
 			}
 		});
+
 		// WhenEnded
 		whenEndedInput.addEventListener('input', function() {
 			const today = new Date();
 			const endDate = new Date(whenEndedInput.value);
 			if (endDate <= today) {
-				whenEndedError.textContent = '結束時間必須在當日之後';
+				whenEndedError.textContent = '結束時間必須在當日之後。';
 				whenEndedError.classList.add('isInvalid');
 				whenEndedInput.style.border = "1px solid red";
 			} else {
@@ -125,6 +131,5 @@ if (isset($_GET['sn'])) {
 				whenEndedInput.style.border = "1px solid #CCC";
 			}
 		});
-
 	})
 </script>

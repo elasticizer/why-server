@@ -33,6 +33,8 @@ include find('./component/sidebar.php');
 	<?php include find('./component/header.php') ?>
 
 	<div class="container-fluid">
+
+	
 		<!-- 分頁按鈕 & 新增按鈕 -->
 		<div class='d-flex justify-content-between align-items-center'>
 			<nav aria-label="...">
@@ -58,10 +60,10 @@ include find('./component/sidebar.php');
 					</li>
 				</ul>
 			</nav>
-			<div><a href="./edit.php" class="btn btn-primary m-1">新增</a></div>
+			<div><a href="./edit.php" class="btn btn-success m-1">新增</a></div>
 		</div>
 
-		<div class="row ">
+		<div class="row">
 			<div class="col-lg-12 d-flex align-items-stretch">
 				<div class="card w-100">
 					<div class="card-body p-4">
@@ -83,9 +85,9 @@ include find('./component/sidebar.php');
 											<?php foreach ($row as $column) : ?>
 												<td class="border-bottom-0 mb-0"><?= $column ?></td>
 											<?php endforeach ?>
-											<td>
-												<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-success m-1">編輯</a>
-												<a href="javascript: deleteOne(<?= $row['SN'] ?>)" class="btn btn-outline-danger m-1">刪除</a>
+											<td class="text-end">
+												<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-primary m-1">編輯</a>
+												<a href="javascript: deleteOne(<?= $row['SN'] ?>)" class="btn btn-danger m-1">刪除</a>
 											</td>
 										</tr>
 									<?php endwhile ?>
