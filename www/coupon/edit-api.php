@@ -27,6 +27,12 @@ if (!empty($_POST['Name'])) {
 		$output['error'] = '折扣必須在 10% 到 90% 之間，間隔值為10。';
 	}
 
+	$existingCoupon = checkCoupon($_POST['Name']);
+	if ($existingCoupon) {
+		$isPass = false;
+		$output['error'] = '該優惠券名稱已經存在。';
+	}
+
 	if ($isPass) {
 		$table = 'Coupon';
 		$statement = connect()->prepare("UPDATE {$table} SET
@@ -43,3 +49,11 @@ if (!empty($_POST['Name'])) {
 	}
 }
 echo json_encode($output, JSON_UNESCAPED_UNICODE);
+
+function checkCoupon($couponName)
+{
+	$table = 'Coupon';
+	$statement = connect()->prepare("SELECT * FROM {$table} WHERE `Name` = ?");
+	$statement->execute([$couponName]);
+	return $statement->fetch(PDO::FETCH_ASSOC);
+}
