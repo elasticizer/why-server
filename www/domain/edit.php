@@ -11,6 +11,7 @@ if (isset ($_GET['sn'])) {
 }
 ;
 
+
 include find('./component/sidebar.php');
 ?>
 
@@ -65,6 +66,7 @@ include find('./component/sidebar.php');
 							placeholder='請輸入名稱'
 							required
 							value='<?= isset ($_GET['sn']) ? $row['Name'] : "" ?>'
+
 						>
 						<div
 							class="form-text"
@@ -100,7 +102,7 @@ include find('./component/sidebar.php');
 						>簡介</label>
 						<textarea
 							type="text"
-							class="form-control"
+							class="form-control required"
 							id="Intro"
 							name="Intro"
 							placeholder="請輸入2~10個字"
