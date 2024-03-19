@@ -11,7 +11,7 @@ $limit = 10;
 $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 
-$columns = ['SN', 'Identifier', 'Title'];
+$columns = ['SN', 'Identifier', 'Title', 'AuthorSN'];
 $statement = connect()->prepare(
 	sprintf(
 		"SELECT %s AS Count FROM %s LIMIT ?, ?",
