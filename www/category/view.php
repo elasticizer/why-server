@@ -12,14 +12,12 @@ $start = $limit * ($page - 1);
 $columns = ['SN', 'Name', 'Intro', 'Implicit', 'ParentSN', 'CreatorSN'];
 $statement = connect()->prepare(
 	sprintf(
-		"SELECT %s FROM Category ORDER BY SN ASC LIMIT ?, ?",
+		"SELECT %s FROM Category WHERE `Name` LIKE ? ORDER BY SN ASC LIMIT ?, ?",
 		implode(', ', $columns)
 	)
 );
 
-
-
-$statement->execute([$start, $limit]);
+$statement->execute(['%' . ($_GET['keyword'] ?? '') . '%', $start, $limit]);
 
 include find('./component/sidebar.php');
 ?>
@@ -32,6 +30,12 @@ include find('./component/sidebar.php');
 				<div class="card w-100">
 					<div class="card-body p-4">
 						<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
+
+						<!-- 搜尋關鍵字 -->
+						<form method="GET" action="<?= $_SERVER['PHP_SELF'] ?>" class="d-flex justify-content-between mb-3">
+							<input type="text" name="keyword" placeholder="輸入關鍵字" class="form-control">
+							<button type="submit" class="btn btn-primary">搜尋</button>
+						</form>
 
 						<!-- 分頁功能 -->
 						<section class="d-flex justify-content-between">
@@ -64,8 +68,6 @@ include find('./component/sidebar.php');
 											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" class="main-grid-item-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
 												<polyline points="9 18 15 12 9 6" />
 											</svg>
-
-
 										</a>
 									</li>
 									<li class="page-item <?= $page == $pages ? 'disabled' : '' ?>">
