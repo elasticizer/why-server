@@ -3,10 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<meta
-		name="viewport"
-		content="width=device-width, initial-scale=1"
-	/>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title><?= $title ?></title>
 	<style>
 		body {
@@ -41,15 +38,7 @@
 </head>
 
 <body>
-	<div
-		class="page-wrapper"
-		id="main-wrapper"
-		data-layout="vertical"
-		data-navbarbg="skin6"
-		data-sidebartype="full"
-		data-sidebar-position="fixed"
-		data-header-position="fixed"
-	>
+	<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
 		<?= $slot ?>
 	</div>
 	<script>
