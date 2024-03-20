@@ -9,11 +9,18 @@ $limit = 10;
 $total = connect()->query("SELECT COUNT(*) FROM Category")->fetch()[0];
 $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
-$columns = ['C1.SN', 'C1.Name', 'C1.Intro', 'C1.Implicit', 'C2.Name AS ParentName', 'Staff.FirstName'];
+$columns = [
+	'C1.SN' => '序號',
+	'C1.Name' => '分類名稱',
+	'C1.Intro' => '簡介',
+	'C1.Implicit' => '是否隱藏',
+	'C2.Name AS ParentName' => '父類別',
+	'Staff.FirstName' => '建立者'
+];
 $statement = connect()->prepare(
 	sprintf(
 		"SELECT %s FROM Category C1 LEFT OUTER JOIN Category C2 ON C1.ParentSN = C2.SN JOIN Staff ON C1.CreatorSN = Staff.SN WHERE C1.`Name` LIKE ? ORDER BY C1.SN ASC LIMIT ?, ?",
-		implode(', ', $columns)
+		implode(', ', array_keys($columns))
 	)
 );
 
