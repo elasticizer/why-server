@@ -33,7 +33,7 @@ include find('./component/sidebar.php');
 
 						<!-- 搜尋關鍵字 -->
 						<form method="GET" action="<?= $_SERVER['PHP_SELF'] ?>" class="d-flex justify-content-between mb-3">
-							<input type="text" name="keyword" placeholder="輸入名稱關鍵字" class="form-control me-3">
+							<input type="text" name="keyword" placeholder="輸入分類名稱關鍵字" class="form-control me-3">
 							<button type="submit" class="btn btn-primary">
 								<i data-feather="search"></i>
 							</button>
@@ -88,24 +88,24 @@ include find('./component/sidebar.php');
 										<?php foreach ($columns as $column) : ?>
 											<th class="border-bottom-0 fw-semibold mb-0"><?= $column ?></th>
 										<?php endforeach ?>
-										<th class="border-bottom-0 fw-semibold mb-0 text-center">刪除</th>
 										<th class="border-bottom-0 fw-semibold mb-0 text-center">編輯</th>
+										<th class="border-bottom-0 fw-semibold mb-0 text-center">刪除</th>
 									</tr>
 								</thead>
 								<tbody>
-									<?php while ($row = $statement->fetch(PDO::FETCH_ASSOC)): ?>
+									<?php while ($row = $statement->fetch(PDO::FETCH_ASSOC)) : ?>
 										<tr>
-											<?php foreach ($row as $key => $value): ?>
+											<?php foreach ($row as $key => $value) : ?>
 												<td class="border-bottom-0 mb-0"><?= $key === 'Implicit' ? ($value === 1 ? '是' : '否') : $value ?></td>
 											<?php endforeach ?>
 											<td class="border-bottom-0 mb-0">
-												<a href="delete.php?sn=<?= $row['SN'] ?>" class="btn btn-danger m-1">
-													<i data-feather="trash-2"></i>
+												<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-info m-1">
+													<i data-feather="edit"></i>
 												</a>
 											</td>
 											<td class="border-bottom-0 mb-0">
-												<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-info m-1">
-													<i data-feather="edit"></i>
+												<a href="delete.php?sn=<?= $row['SN'] ?>" class="btn btn-danger m-1" onclick="return confirm('是否確定刪除？')">
+													<i data-feather="trash-2"></i>
 												</a>
 											</td>
 										</tr>
