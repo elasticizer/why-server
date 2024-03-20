@@ -63,6 +63,9 @@ include find('./component/sidebar.php');
 						<label class="form-check-label" for="exampleCheck1">隱藏</label>
 					</div>
 					<button type="submit" class="btn btn-primary"><?= isset($_GET['sn']) ? '編輯完成' : '提交表單' ?></button>
+					<a href="view.php" class="btn btn-danger m-1">
+						<?= isset($_GET['sn']) ? '取消編輯' : '取消新增' ?>
+					</a>
 				</form>
 			</div>
 		</div>
