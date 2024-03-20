@@ -25,7 +25,7 @@ include find('./component/sidebar.php');
 			<div class="card-body">
 				<div class='d-flex justify-content-between'>
 					<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
-					<a href="view.php" class="btn btn-primary m-1">返回</a>
+					<a href="index.php" class="btn btn-primary m-1">返回列表頁</a>
 				</div>
 				<form name="form1" action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
 					<div class="mb-3 <?= isset($_GET['sn']) ? '' : 'd-none' ?>">

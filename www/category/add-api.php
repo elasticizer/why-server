@@ -2,7 +2,7 @@
 $layout = './layout/layout.php';
 require '../arranger.php';
 
-header('Location: view.php');
+header('Location: index.php');
 
 if (!empty($_POST['name'])) {
 	$statement = connect()->prepare("INSERT INTO `Category` (`Name`, `Intro`,
