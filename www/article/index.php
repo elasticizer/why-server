@@ -19,33 +19,12 @@ $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 
 $columns = ['SN', 'Identifier', 'Title', 'AuthorSN'];
-// if (!isset($_GET['keyword'])) {
-// 	$statement = connect()->prepare(
-// 		sprintf(
-// 			"SELECT %s AS Count FROM %s LIMIT ?, ?",
-// 			implode(', ', $columns),
-// 			$table
-// 		)
-// 	);
-// };
 
-// // 查詢判斷式
-// if (isset($_GET['keyword'])) {
-// 	$statement = connect()->prepare(
-// 		sprintf(
-// 			"SELECT %s AS Count FROM %s WHERE Title LIKE '%%%s%%'  LIMIT ?, ?",   //%%是因為使用了sprintf所以要跳脫，%%=%
-// 			implode(', ', $columns),
-// 			$table,
-// 			$_GET['keyword']
-// 		)
-// 	);
-// }
-
-// 意思同上
 $statement = connect()->prepare(
 	sprintf(
-		"SELECT %s FROM %s WHERE Title LIKE ? LIMIT ?, ?",
+		"SELECT %s FROM %s WHERE `Title` LIKE ? LIMIT ?, ?",
 		implode(', ', $columns),
+		//implode('連接符號',陣列)，將陣列使用連結符號串成字串
 		$table
 	)
 );
@@ -92,6 +71,8 @@ include find('./component/sidebar.php');
 										<?php endif ?>
 										<li class=" page-item active" aria-current="page">
 											<a class="page-link" href="?<?= http_build_query([...$_GET, 'page' => $page]) ?>"><?= $page ?></a>
+											<!-- http_build_query() 函式將這個新的數組(key=value)轉換為 URL 查詢字串的格式。這個函式將數組中的每個鍵值對轉換為形如 "key=value" 的字符串，並用 "&" 符號將它們連接在一起，以構建 URL 查詢字串。 -->
+											<!-- ...等於創建了一個新的數組，保留了$_GET中的所有屬性, 並添加'page' => $page這對新的屬性-->
 										</li>
 										<?php if ($page < $pages) : ?>
 											<li class="page-item">
