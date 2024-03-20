@@ -18,12 +18,13 @@ $limit = 10;
 $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 
-$columns = ['SN', 'Identifier', 'Title', 'AuthorSN'];
+$columns = ['SN' => '序號', 'Identifier' => '辨識碼', 'Title' => '標題', 'AuthorSN' => '作者序號'];
 
 $statement = connect()->prepare(
 	sprintf(
 		"SELECT %s FROM %s WHERE `Title` LIKE ? LIMIT ?, ?",
-		implode(', ', $columns),
+
+		implode(', ', array_keys($columns)),
 		//implode('連接符號',陣列)，將陣列使用連結符號串成字串
 		$table
 	)
@@ -94,11 +95,10 @@ include find('./component/sidebar.php');
 							<table class="table text-nowrap mb-0 align-middle ">
 								<thead class="text-dark fs-4">
 									<tr>
-										<?php foreach ($columns as $column) : ?>
-											<th class="border-bottom-0 fw-semibold mb-0"><?= $column ?></th>
+										<?php foreach ($columns as $column => $value) : ?>
+											<th class="border-bottom-1 fw-semibold mb-0"><?= $value ?></th>
 										<?php endforeach ?>
-										<th class="border-bottom-0 fw-semibold mb-0"></th>
-										<th class="border-bottom-0 fw-semibold mb-0"></th>
+										<th class="border-bottom-1 fw-semibold mb-0"></th>
 									</tr>
 								</thead>
 								<tbody>

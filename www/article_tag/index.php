@@ -76,10 +76,9 @@ include find('./component/sidebar.php');
 								<thead class="text-dark fs-4">
 									<tr>
 										<?php foreach ($columns as $column) : ?>
-											<th class="border-bottom-0 fw-semibold mb-0"><?= $column ?></th>
+											<th class="border-bottom-1 fw-semibold mb-0"><?= $column ?></th>
 										<?php endforeach ?>
-										<th></th>
-										<th></th>
+										<th class="border-bottom-1 fw-semibold mb-0"></th>
 									</tr>
 								</thead>
 								<tbody>

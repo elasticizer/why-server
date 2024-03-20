@@ -78,10 +78,9 @@ include find('./component/sidebar.php');
 								<thead class="text-dark fs-4">
 									<tr>
 										<?php foreach ($columns as $column) : ?>
-											<th class="border-bottom-0 fw-semibold mb-0"><?= $column ?></th>
+											<th class="border-bottom-1 fw-semibold mb-0"><?= $column ?></th>
 										<?php endforeach ?>
-										<th></th>
-										<th></th>
+										<th class="border-bottom-1 fw-semibold mb-0"></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -93,8 +92,7 @@ include find('./component/sidebar.php');
 											<td class="border-bottom-0 mb-0">
 												<a href="edit.php?ArticleSN=<?= $row['ArticleSN'] ?>" class="btn btn-info m-1">編輯</a>
 												<a href="delete.php?ArticleSN=<?= $row['ArticleSN'] ?>" class="btn btn-danger m-1" onclick="event.preventDefault(), confirm('確定要刪除該筆資料？') && (location.href = this.href)">刪除</a>
-
-												< </td>
+											</td>
 
 										</tr>
 									<?php endwhile ?>
