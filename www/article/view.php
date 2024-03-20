@@ -12,15 +12,56 @@ $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 
 $columns = ['SN', 'Identifier', 'Title', 'AuthorSN'];
+// if (!isset($_GET['keyword'])) {
+// 	$statement = connect()->prepare(
+// 		sprintf(
+// 			"SELECT %s AS Count FROM %s LIMIT ?, ?",
+// 			implode(', ', $columns),
+// 			$table
+// 		)
+// 	);
+// };
+
+// // 查詢判斷式
+// if (isset($_GET['keyword'])) {
+// 	$statement = connect()->prepare(
+// 		sprintf(
+// 			"SELECT %s AS Count FROM %s WHERE Title LIKE '%%%s%%'  LIMIT ?, ?",   //%%是因為使用了sprintf所以要跳脫，%%=%
+// 			implode(', ', $columns),
+// 			$table,
+// 			$_GET['keyword']
+// 		)
+// 	);
+// }
+
+// 意思同上
 $statement = connect()->prepare(
 	sprintf(
-		"SELECT %s AS Count FROM %s LIMIT ?, ?",
+		"SELECT %s AS Count FROM %s WHERE Title LIKE ? LIMIT ?, ?",
 		implode(', ', $columns),
 		$table
 	)
 );
 
-$statement->execute([$start, $limit]);
+$statement->execute(['%' . (($_GET['keyword']) ?? "") . '%', $start,  $limit]);
+
+// 依搜尋結果改變分頁功能頁數
+if (isset($_GET['keyword'])) {
+	$searchTotal = connect()->query(
+		sprintf(
+			"SELECT COUNT(*) AS Count FROM %s WHERE Title LIKE '%%%s%%' ",
+			$table,
+			$_GET['keyword']
+		)
+	)->fetch()[0];
+	$pages = ceil($searchTotal / $limit);
+}
+
+
+
+
+
+
 
 include find('./component/sidebar.php');
 ?>
@@ -35,39 +76,79 @@ include find('./component/sidebar.php');
 					<div class="card-body p-4">
 						<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
 
+						<!-- 查詢功能 -->
+
+						<form class="d-flex justify-content-between mb-3" method='GET' action='<?= $_SERVER['PHP_SELF'] ?>'>
+							<input type="text" name="keyword" placeholder="輸入名稱關鍵字" class="form-control me-3">
+							<button type="submit" class="btn btn-primary">
+								<i data-feather="search"></i>
+							</button>
+						</form>
+
 
 						<!-- 分頁功能 -->
 						<section class='d-flex justify-content-between align-items-center'>
 							<div>
-								<nav aria-label="...">
-									<ul class="pagination">
-										<li class="page-item ">
-											<a class="page-link <?= $page > 1 ? '' : 'disabled' ?>" href="?page=1">
-												<i data-feather="chevrons-left"></i>
-											</a>
-										</li>
-										<?php if ($page > 1) : ?>
-											<li class="page-item">
-												<a class="page-link" href="?page=<?= $page - 1 ?>"><?= $page - 1 ?></a>
+								<?php if (!isset($_GET['keyword'])) : ?>
+									<nav aria-label="...">
+										<ul class="pagination mb-0">
+											<li class="page-item ">
+												<a class="page-link <?= $page > 1 ? '' : 'disabled' ?>" href="?page=1">
+													<i data-feather="chevrons-left"></i>
+												</a>
 											</li>
-										<?php endif ?>
-										<li class="page-item active" aria-current="page">
-											<a class="page-link" href="?page=<?= $page ?>"><?= $page ?></a>
-										</li>
-										<?php if ($page < $pages) : ?>
-											<li class="page-item">
-												<a class="page-link" href="?page=<?= $page + 1 ?>"><?= $page + 1 ?></a>
+											<?php if ($page > 1) : ?>
+												<li class="page-item">
+													<a class="page-link" href="?page=<?= $page - 1 ?>"><?= $page - 1 ?></a>
+												</li>
+											<?php endif ?>
+											<li class="page-item active" aria-current="page">
+												<a class="page-link" href="?page=<?= $page ?>"><?= $page ?></a>
 											</li>
-										<?php endif ?>
-										<li class="page-item">
-											<a class="page-link <?= $page < $pages ? '' : 'disabled' ?>" href="?page=<?= $pages ?>">
-												<i data-feather="chevrons-right"></i>
-											</a>
-										</li>
-									</ul>
-								</nav>
+											<?php if ($page < $pages) : ?>
+												<li class="page-item">
+													<a class="page-link" href="?page=<?= $page + 1 ?>"><?= $page + 1 ?></a>
+												</li>
+											<?php endif ?>
+											<li class="page-item">
+												<a class="page-link <?= $page < $pages ? '' : 'disabled' ?>" href="?page=<?= $pages ?>">
+													<i data-feather="chevrons-right"></i>
+												</a>
+											</li>
+										</ul>
+									</nav>
+								<?php endif ?>
+								<?php if (isset($_GET['keyword'])) : ?>
+									<nav aria-label="...">
+										<ul class="pagination mb-0">
+											<li class="page-item ">
+												<a class="page-link <?= $page > 1 ? '' : 'disabled' ?>" href="?keyword=<?= $_GET['keyword'] ?>&page=">
+													<i data-feather="chevrons-left"></i>
+												</a>
+											</li>
+											<?php if ($page > 1) : ?>
+												<li class="page-item">
+													<a class="page-link" href="?keyword=<?= $_GET['keyword'] ?>&page=<?= $page - 1 ?>"> <?= $page - 1 ?></a>
+												</li>
+											<?php endif ?>
+											<li class=" page-item active" aria-current="page">
+												<a class="page-link" href="?keyword=<?= $_GET['keyword'] ?>&page=<?= $page ?>"><?= $page ?></a>
+											</li>
+											<?php if ($page < $pages) : ?>
+												<li class="page-item">
+													<a class="page-link" href="?keyword=<?= $_GET['keyword'] ?>&page=<?= $page + 1 ?>"><?= $page + 1 ?></a>
+												</li>
+											<?php endif ?>
+											<li class="page-item">
+												<a class="page-link <?= $page < $pages ? '' : 'disabled' ?>" href="?keyword=<?= $_GET['keyword'] ?>&page=<?= $pages ?>">
+													<i data-feather="chevrons-right"></i>
+												</a>
+											</li>
+										</ul>
+									</nav>
+								<?php endif ?>
 							</div>
-							<div><a href="./edit.php" class="btn btn-success m-1">新增</a></div>
+							<div><a href="./edit.php" class="btn btn-success ">新增</a></div>
 						</section>
 
 
