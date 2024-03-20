@@ -25,7 +25,7 @@ include find('./component/sidebar.php');
 			<div class="card-body">
 				<div class='d-flex justify-content-between'>
 					<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
-					<a href="view.php" class="btn btn-success m-1">回主畫面</a>
+					<a href="view.php" class="btn btn-primary m-1">返回</a>
 				</div>
 				<form name="form1" action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
 					<div class="mb-3 <?= isset($_GET['sn']) ? '' : 'd-none' ?>">
@@ -65,7 +65,7 @@ include find('./component/sidebar.php');
 						<input type="checkbox" class="form-check-input" id="exampleCheck1" name="checkbox">
 						<label class="form-check-label" for="exampleCheck1">隱藏</label>
 					</div>
-					<button type="submit" class="btn btn-primary"><?= isset($_GET['sn']) ? '編輯完成' : '確定新增' ?></button>
+					<button type="submit" class="btn btn-success"><?= isset($_GET['sn']) ? '編輯完成' : '確定新增' ?></button>
 					<button type="reset" class="btn btn-danger <?= isset($_GET['sn']) ? 'd-none' : '' ?>">重新填寫</button>
 				</form>
 			</div>
