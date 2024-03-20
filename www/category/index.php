@@ -109,7 +109,7 @@ include find('./component/sidebar.php');
 												</a>
 											</td>
 											<td class="border-bottom-0 mb-0">
-												<a href="delete.php?sn=<?= $row['SN'] ?>" class="btn btn-danger m-1" onclick="event.preventDefault(), confirm('是否確定刪除？') && (location.href = this.href)">
+												<a href="delete.php?sn=<?= $row['SN'] ?>" class="btn btn-danger m-1" onclick="event.preventDefault(), confirm('是否確定刪除？') && (location.href = ｀this.href)">
 													<i data-feather="trash-2"></i>
 												</a>
 											</td>
