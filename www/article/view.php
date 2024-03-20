@@ -6,7 +6,14 @@ require '../arranger.php';
 
 $page = intval($_GET['page'] ?? 1);
 $table = 'Article';
-$total = connect()->query("SELECT COUNT(*) FROM {$table}")->fetch()[0];
+$statement = connect()->prepare(
+	sprintf(
+		"SELECT COUNT(*) FROM %s WHERE `Title` LIKE ?",
+		$table
+	)
+);
+$statement->execute(['%' . (($_GET['keyword']) ?? "") . '%']);
+$total = $statement->fetch(PDO::FETCH_NUM)[0];
 $limit = 10;
 $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
@@ -37,31 +44,13 @@ $columns = ['SN', 'Identifier', 'Title', 'AuthorSN'];
 // 意思同上
 $statement = connect()->prepare(
 	sprintf(
-		"SELECT %s AS Count FROM %s WHERE Title LIKE ? LIMIT ?, ?",
+		"SELECT %s FROM %s WHERE Title LIKE ? LIMIT ?, ?",
 		implode(', ', $columns),
 		$table
 	)
 );
 
 $statement->execute(['%' . (($_GET['keyword']) ?? "") . '%', $start,  $limit]);
-
-// 依搜尋結果改變分頁功能頁數
-if (isset($_GET['keyword'])) {
-	$searchTotal = connect()->query(
-		sprintf(
-			"SELECT COUNT(*) AS Count FROM %s WHERE Title LIKE '%%%s%%' ",
-			$table,
-			$_GET['keyword']
-		)
-	)->fetch()[0];
-	$pages = ceil($searchTotal / $limit);
-}
-
-
-
-
-
-
 
 include find('./component/sidebar.php');
 ?>
@@ -89,70 +78,36 @@ include find('./component/sidebar.php');
 						<!-- 分頁功能 -->
 						<section class='d-flex justify-content-between align-items-center'>
 							<div>
-								<?php if (!isset($_GET['keyword'])) : ?>
-									<nav aria-label="...">
-										<ul class="pagination mb-0">
-											<li class="page-item ">
-												<a class="page-link <?= $page > 1 ? '' : 'disabled' ?>" href="?page=1">
-													<i data-feather="chevrons-left"></i>
-												</a>
-											</li>
-											<?php if ($page > 1) : ?>
-												<li class="page-item">
-													<a class="page-link" href="?page=<?= $page - 1 ?>"><?= $page - 1 ?></a>
-												</li>
-											<?php endif ?>
-											<li class="page-item active" aria-current="page">
-												<a class="page-link" href="?page=<?= $page ?>"><?= $page ?></a>
-											</li>
-											<?php if ($page < $pages) : ?>
-												<li class="page-item">
-													<a class="page-link" href="?page=<?= $page + 1 ?>"><?= $page + 1 ?></a>
-												</li>
-											<?php endif ?>
+								<nav aria-label="...">
+									<ul class="pagination mb-0">
+										<li class="page-item ">
+											<a class="page-link <?= $page > 1 ? '' : 'disabled' ?>" href="?<?= http_build_query([...$_GET, 'page' => 1]) ?>">
+												<i data-feather="chevrons-left"></i>
+											</a>
+										</li>
+										<?php if ($page > 1) : ?>
 											<li class="page-item">
-												<a class="page-link <?= $page < $pages ? '' : 'disabled' ?>" href="?page=<?= $pages ?>">
-													<i data-feather="chevrons-right"></i>
-												</a>
+												<a class="page-link" href="?<?= http_build_query([...$_GET, 'page' => $page - 1]) ?>"> <?= $page - 1 ?></a>
 											</li>
-										</ul>
-									</nav>
-								<?php endif ?>
-								<?php if (isset($_GET['keyword'])) : ?>
-									<nav aria-label="...">
-										<ul class="pagination mb-0">
-											<li class="page-item ">
-												<a class="page-link <?= $page > 1 ? '' : 'disabled' ?>" href="?keyword=<?= $_GET['keyword'] ?>&page=">
-													<i data-feather="chevrons-left"></i>
-												</a>
-											</li>
-											<?php if ($page > 1) : ?>
-												<li class="page-item">
-													<a class="page-link" href="?keyword=<?= $_GET['keyword'] ?>&page=<?= $page - 1 ?>"> <?= $page - 1 ?></a>
-												</li>
-											<?php endif ?>
-											<li class=" page-item active" aria-current="page">
-												<a class="page-link" href="?keyword=<?= $_GET['keyword'] ?>&page=<?= $page ?>"><?= $page ?></a>
-											</li>
-											<?php if ($page < $pages) : ?>
-												<li class="page-item">
-													<a class="page-link" href="?keyword=<?= $_GET['keyword'] ?>&page=<?= $page + 1 ?>"><?= $page + 1 ?></a>
-												</li>
-											<?php endif ?>
+										<?php endif ?>
+										<li class=" page-item active" aria-current="page">
+											<a class="page-link" href="?<?= http_build_query([...$_GET, 'page' => $page]) ?>"><?= $page ?></a>
+										</li>
+										<?php if ($page < $pages) : ?>
 											<li class="page-item">
-												<a class="page-link <?= $page < $pages ? '' : 'disabled' ?>" href="?keyword=<?= $_GET['keyword'] ?>&page=<?= $pages ?>">
-													<i data-feather="chevrons-right"></i>
-												</a>
+												<a class="page-link" href="?<?= http_build_query([...$_GET, 'page' => $page + 1]) ?>"><?= $page + 1 ?></a>
 											</li>
-										</ul>
-									</nav>
-								<?php endif ?>
+										<?php endif ?>
+										<li class="page-item">
+											<a class="page-link <?= $page < $pages ? '' : 'disabled' ?>" href="?<?= http_build_query([...$_GET, 'page' => $pages]) ?>">
+												<i data-feather="chevrons-right"></i>
+											</a>
+										</li>
+									</ul>
+								</nav>
 							</div>
 							<div><a href="./edit.php" class="btn btn-success ">新增</a></div>
 						</section>
-
-
-
 
 						<div class="table-responsive">
 							<table class="table text-nowrap mb-0 align-middle ">
