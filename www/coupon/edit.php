@@ -25,7 +25,6 @@ if (isset($_GET['sn'])) {
 
 	<div class="container-fluid">
 
-	
 
 		<div class="card">
 			<div class="card-body">
@@ -56,7 +55,7 @@ if (isset($_GET['sn'])) {
 					<div class="mb-3">
 						<label for="DiscountRate" class="form-label">折扣</label>
 						<div class="input-group mb-3">
-							<input type="number" class="form-control" placeholder="請輸入折扣比率10-90%" id="DiscountRate" name="DiscountRate" value="<?= isset($_GET['sn']) ? $row['DiscountRate'] : "" ?>">
+							<input type="number" class="form-control" placeholder="請輸入折扣比率10-90%" id="DiscountRate" name="DiscountRate" step="10" value="<?= isset($_GET['sn']) ? $row['DiscountRate'] : "" ?>">
 							<span class="input-group-text">%</span>
 						</div>
 						<div class="form-text" id="discountError"></div>
@@ -71,7 +70,8 @@ if (isset($_GET['sn'])) {
 						<div class="form-text" id="whenEndedError"></div>
 					</div>
 
-					<button type="submit" class="btn btn-primary"><?= isset($_GET['sn']) ? '確定修改' : '確定新增' ?></button>
+					<button type="submit" class="btn btn-primary m-1"><?= isset($_GET['sn']) ? '確定修改' : '確定新增' ?></button>
+					<button href="view.php" class="btn btn-danger m-1">回到列表頁</button>
 				</form>
 
 			</div>
