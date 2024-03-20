@@ -5,8 +5,11 @@ $layout = './layout/layout.php';
 require '../arranger.php';
 
 $page = $_GET['page'] ?? 1;
+$page = is_numeric($page) ? intval($page) : 1;
 $limit = 10;
-$total = connect()->query("SELECT COUNT(*) FROM Category")->fetch()[0];
+$statement = connect()->prepare("SELECT COUNT(*) FROM Category C1 LEFT OUTER JOIN Category C2 ON C1.ParentSN = C2.SN JOIN Staff ON C1.CreatorSN = Staff.SN WHERE C1.`Name` LIKE ?");
+$statement->execute(['%' . ($_GET['keyword'] ?? '') . '%']);
+$total = $statement->fetch(PDO::FETCH_NUM)[0];
 $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 $columns = [
@@ -40,7 +43,7 @@ include find('./component/sidebar.php');
 
 						<!-- 搜尋關鍵字 -->
 						<form method="GET" action="<?= $_SERVER['PHP_SELF'] ?>" class="d-flex justify-content-between mb-3">
-							<input type="text" name="keyword" placeholder="輸入分類名稱關鍵字" class="form-control me-3">
+							<input type="text" name="keyword" placeholder="輸入分類名稱關鍵字" class="form-control me-3" value="<?= $_GET['keyword'] ?? '' ?>">
 							<button type="submit" class="btn btn-primary">
 								<i data-feather="search"></i>
 							</button>
@@ -50,31 +53,21 @@ include find('./component/sidebar.php');
 						<section class="d-flex justify-content-between">
 							<nav>
 								<ul class="pagination">
-									<li class="page-item <?= $page == 1 ? 'disabled' : '' ?>">
-										<a class="page-link" href="?page=1">
+									<li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+										<a class="page-link" href="?<?= http_build_query([...$_GET, 'page' => 1]) ?>">
 											<i data-feather="chevrons-left"></i>
 											</svg>
 										</a>
 									</li>
-									<li class="page-item <?= $page == 1 ? 'disabled' : '' ?>">
-										<a class="page-link" href="?page=<?= $page - 1 ?>">
-											<i data-feather="chevron-left"></i>
-										</a>
-									</li>
 									<?php for ($i = $page - 5; $i <= $page + 5; $i++) : ?>
 										<?php if ($i >= 1 and $i <= $pages) : ?>
-											<li class="page-item <?= $i == $page ? 'active' : '' ?>">
-												<a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+											<li class="page-item <?= $i === $page ? 'active' : '' ?>">
+												<a class="page-link" href="?<?= http_build_query([...$_GET, 'page' => $i]) ?>"><?= $i ?></a>
 											</li>
 										<?php endif ?>
 									<?php endfor ?>
-									<li class="page-item <?= $page == $pages ? 'disabled' : '' ?>">
-										<a class="page-link" href="?page=<?= $page + 1 ?>">
-											<i data-feather="chevron-right"></i>
-										</a>
-									</li>
-									<li class="page-item <?= $page == $pages ? 'disabled' : '' ?>">
-										<a class="page-link" href="?page=<?= $pages ?>">
+									<li class="page-item <?= $page >= $pages ? 'disabled' : '' ?>">
+										<a class="page-link" href="?<?= http_build_query([...$_GET, 'page' => $pages]) ?>">
 											<i data-feather="chevrons-right"></i>
 										</a>
 									</li>
