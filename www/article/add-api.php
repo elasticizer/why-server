@@ -5,7 +5,7 @@ require '../arranger.php';
 session_start();
 
 
-header('Location: view.php');
+header('Location: index.php');
 
 
 

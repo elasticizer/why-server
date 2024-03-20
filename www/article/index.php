@@ -127,8 +127,8 @@ include find('./component/sidebar.php');
 												<td class="border-bottom-0 mb-0"><?= $column ?></td>
 											<?php endforeach ?>
 											<td class="border-bottom-0 mb-0">
-												<a href="delete.php?sn=<?= $row['SN'] ?>" class="btn btn-danger m-1">刪除</a>
 												<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-info m-1">編輯</a>
+												<a href="delete.php?sn=<?= $row['SN'] ?>" class="btn btn-danger m-1" onclick="event.preventDefault(), confirm('確定要刪除該筆資料？') && (location.href = this.href)">刪除</a>
 											</td>
 										</tr>
 									<?php endwhile ?>

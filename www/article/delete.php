@@ -2,7 +2,7 @@
 $layout = './layout/layout.php';
 require '../arranger.php';
 
-header('Location: view.php');
+header('Location: index.php');
 
 
 $sn = isset($_GET['sn']) ? intval($_GET['sn']) : 0;
