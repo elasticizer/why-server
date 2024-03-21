@@ -33,6 +33,11 @@ include find('./component/sidebar.php');
 						<input type="text" class="form-control" id="sn" name="sn" value="<?= $row['SN'] ?>" disabled>
 					</div>
 					<div class="mb-3">
+						<label for="identifier" class="form-label">識別碼</label>
+						<input type="text" class="form-control" id="identifier" name="identifier" value="<?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>" required pattern oninput="this.parentNode.classList.remove('was-validated')">
+						<div class="invalid-feedback">識別碼重複了</div>
+					</div>
+					<div class="mb-3">
 						<label for="categoryName" class="form-label">分類名稱</label>
 						<input type="text" class="form-control" id="categoryName" name="name" value="<?= isset($_GET['sn']) ? $row['Name'] : '' ?>">
 						<div></div>
@@ -62,7 +67,7 @@ include find('./component/sidebar.php');
 						</div>
 					<?php endif ?>
 					<div class="mb-3 form-check">
-						<input type="checkbox" class="form-check-input" id="exampleCheck1" name="checkbox">
+						<input type="checkbox" class="form-check-input" id="exampleCheck1" name="checkbox" value="1">
 						<label class="form-check-label" for="exampleCheck1">隱藏</label>
 					</div>
 					<button type="submit" class="btn btn-success"><?= isset($_GET['sn']) ? '編輯完成' : '確定新增' ?></button>
@@ -80,6 +85,7 @@ include find('./component/sidebar.php');
 	} = form1
 
 	form1.addEventListener('submit', validate);
+	form1.identifier.addEventListener('blur', check);
 
 	function validate(e) {
 		e.preventDefault();
@@ -101,5 +107,19 @@ include find('./component/sidebar.php');
 			introField.style.border = '';
 		}
 		form1.submit();
+	}
+
+	async function check() {
+		if (!this.value) {
+			return;
+		}
+
+		const data = await fetch(`add_check_api.php?identifier=${this.value}`).then(r => r.json());
+
+		if (!data.existent) {
+			return;
+		}
+
+		this.parentNode.classList.add('was-validated');
 	}
 </script>
