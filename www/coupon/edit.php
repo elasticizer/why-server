@@ -34,18 +34,23 @@ if (isset($_GET['sn'])) {
 							<input type="text" class="form-control" id="SN" name="SN" value="<?= isset($_GET['sn']) ? $row['SN'] : "" ?>" readonly>
 						</div>
 					<?php endif; ?>
+					<!-- Identifier -->
+					<div class="mb-3">
+						<label for="Identifier" class="form-label">識別碼</label>
+						<input type="text" class="form-control" id="Identifier" name="Identifier" value="<?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>">
+					</div>
 					<!-- Name -->
 					<div class="mb-3">
 						<label for="Name" class="form-label">優惠券名稱</label>
 						<input type="text" class="form-control" id="Name" name="Name" value="<?= isset($_GET['sn']) ? $row['Name'] : "" ?>">
 						<div class="form-text" id="nameError"></div>
 					</div>
-					<!-- Explanation -->
+					<!-- Description -->
 					<div class="mb-3">
-						<label for="Explanation" class="form-label">說明</label>
+						<label for="Description" class="form-label">說明</label>
 						<div class="form-floating">
-							<textarea class="form-control" placeholder="Leave a comment here" id="Explanation" name="Explanation"><?= isset($_GET['sn']) ? $row['Explanation'] : "" ?></textarea>
-							<label for="Explanation">請輸入優惠券說明</label>
+							<textarea class="form-control" placeholder="Leave a comment here" id="Description" name="Description"><?= isset($_GET['sn']) ? $row['Description'] : "" ?></textarea>
+							<label for="Description">請輸入優惠券說明</label>
 						</div>
 					</div>
 					<!-- DiscountRate -->

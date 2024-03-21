@@ -17,6 +17,7 @@ $sortValue = $_GET['sortValue'] ?? 'SN ASC'; // 排序
 $options = [['依序號由小到大', 'SN ASC'], ['依序號由大到小', 'SN DESC'], ['依折扣比例由小到大', 'DiscountRate ASC'], ['依折扣比例由大到小', 'DiscountRate DESC']];
 $columns = [
 	"{$table}.SN" => '序號',
+	'Identifier' => '識別碼',
 	'Name' => '名稱',
 	'DiscountRate' => '折扣比率',
 	'FirstName' => '建立者'
@@ -104,7 +105,7 @@ include find('./component/sidebar.php');
 											<td class="border-bottom-0 mb-0"><?= $column ?></td>
 										<?php endforeach ?>
 										<td class="text-end border-bottom-0 mb-0">
-											<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-primary m-1 "><i data-feather="edit"></i> 編輯</a>
+											<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-primary m-1"><i data-feather="edit"></i> 編輯</a>
 											<a href="javascript: deleteOne(<?= $row['SN'] ?>)" class="btn btn-danger m-1"><i data-feather="trash-2"></i> 刪除</a>
 										</td>
 									</tr>
@@ -132,7 +133,7 @@ include find('./component/sidebar.php');
 		var urlParams = new URLSearchParams(window.location.search);
 		// window.location.search 取得目前造訪網頁查詢參數(搜索關鍵字)
 		var keyword = urlParams.get('keyword');
-		// 更新 URL 中的排序參數和搜索關鍵字
+		// 更新 URL 的參數和關鍵字
 		urlParams.set('sortValue', selectedSort);
 		// 重新載入頁面以應用新的排序
 		window.location.href = window.location.pathname + '?' + urlParams.toString() + (keyword ? '&keyword=' + keyword : '');

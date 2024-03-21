@@ -7,9 +7,9 @@ header('Content-Type: application/json');
 
 $output = [
 	'success' => false,
-	// 'postData' => $_POST,
+	'postData' => $_POST,
 	'error' => '',
-	// 'code' => 0,
+	'code' => 0,
 ];
 
 
@@ -36,10 +36,11 @@ if (!empty($_POST['Name'])) {
 	if ($isPass) {
 		$table = 'Coupon';
 		$statement = connect()->prepare("UPDATE {$table} SET
-	`Name`=?,`Explanation`=?,`DiscountRate`=?,`WhenEnded`=? WHERE `SN`=?");
+	`Identifier`=?,`Name`=?,`Description`=?,`DiscountRate`=?,`WhenEnded`=? WHERE `SN`=?");
 		$statement->execute([
+			$_POST['Identifier'],
 			$_POST['Name'],
-			$_POST['Explanation'],
+			$_POST['Description'],
 			$_POST['DiscountRate'],
 			$_POST['WhenEnded'],
 			$_POST['SN']

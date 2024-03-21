@@ -7,9 +7,9 @@ header('Content-Type: application/json');
 
 $output = [
 	'success' => false,
-	// 'postData' => $_POST,
+	'postData' => $_POST,
 	'error' => '',
-	// 'code' => 0,
+	'code' => 0,
 ];
 
 if (!empty($_POST['Name'])) {
@@ -30,16 +30,17 @@ if (!empty($_POST['Name'])) {
 	if ($existingCoupon) {
 		$isPass = false;
 		$output['error'] = '該優惠券名稱已經存在。';
-		$output['showModal'] = true;
+		// $output['showModal'] = true;
 	}
 
 	if ($isPass) {
 		$table = 'Coupon';
 		$statement = connect()->prepare("INSERT INTO {$table}
-	(`Name`, `Explanation`, `DiscountRate`, `WhenEnded`, `CreatorSN`) VALUES (?, ?, ?, ?, 10)");
+	(`Identifier`, `Name`, `Description`, `DiscountRate`, `WhenEnded`, `CreatorSN`) VALUES (?, ?, ?, ?, ?, 10)");
 		$statement->execute([
+			$_POST['Identifier'],
 			$_POST['Name'],
-			$_POST['Explanation'],
+			$_POST['Description'],
 			$_POST['DiscountRate'],
 			$_POST['WhenEnded']
 		]);
