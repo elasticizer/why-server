@@ -94,6 +94,7 @@ if (isset($_GET['sn'])) {
 </div>
 
 <script>
+
 	document.addEventListener('DOMContentLoaded', () => {
 		const nameInput = document.getElementById('Name');
 		const nameError = document.getElementById('nameError');

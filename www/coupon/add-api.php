@@ -40,13 +40,15 @@ if (!empty($_POST['Name'])) {
 	if ($isPass) {
 		$table = 'Coupon';
 		$statement = connect()->prepare("INSERT INTO {$table}
-	(`Identifier`, `Name`, `Description`, `DiscountRate`, `WhenEnded`, `CreatorSN`) VALUES (?, ?, ?, ?, ?, -3)");
+	(`Identifier`, `Name`, `Description`, `DiscountRate`, `WhenEnded`, `CreatorSN`) VALUES (?, ?, ?, ?, ?, ?)");
 		$statement->execute([
 			$_POST['Identifier'],
 			$_POST['Name'],
 			$_POST['Description'],
 			$_POST['DiscountRate'],
-			$_POST['WhenEnded']
+			$_POST['WhenEnded'],
+			$_SESSION['sn']
+
 		]);
 		$output['success'] = boolval(($statement->rowCount()));
 	}
