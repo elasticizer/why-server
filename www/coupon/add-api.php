@@ -20,6 +20,11 @@ if (!empty($_POST['Name'])) {
 		$output['error'] = '優惠券名稱必須要三個字以上。';
 	}
 
+	if (mb_strlen($_POST['Identifier']) > 9) {
+		$isPass = false;
+		$output['error'] = '識別碼不可以超過九個字。';
+	}
+
 	$discountRate = intval($_POST['DiscountRate']);
 	if ($discountRate % 10 !== 0 || $discountRate < 10 || $discountRate > 90) {
 		$isPass = false;

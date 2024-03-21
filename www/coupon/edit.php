@@ -41,6 +41,7 @@ if (isset($_GET['sn'])) {
 					<div class="mb-3">
 						<label for="Identifier" class="form-label">識別碼</label>
 						<input type="text" class="form-control" id="Identifier" name="Identifier" value="<?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>">
+						<div class="form-text" id="identifierError"></div>
 					</div>
 					<!-- Name -->
 					<div class="mb-3">
@@ -97,6 +98,9 @@ if (isset($_GET['sn'])) {
 		const nameInput = document.getElementById('Name');
 		const nameError = document.getElementById('nameError');
 
+		const identifierInput = document.getElementById('Identifier');
+		const identifierError = document.getElementById('identifierError');
+
 		const discountInput = document.getElementById('DiscountRate');
 		const discountError = document.getElementById('discountError');
 
@@ -117,6 +121,19 @@ if (isset($_GET['sn'])) {
 				nameError.textContent = '';
 				nameError.classList.remove('isInvalid');
 				nameInput.style.border = "1px solid #CCC";
+			}
+		});
+
+		// identifier
+		identifierInput.addEventListener('input', () => {
+			if (identifierInput.value.length > 9) {
+				identifierError.textContent = '識別碼不可以超過九個字。';
+				identifierError.classList.add('isInvalid');
+				identifierInput.style.border = "1px solid red";
+			} else {
+				identifierError.textContent = '';
+				identifierError.classList.remove('isInvalid');
+				identifierInput.style.border = "1px solid #CCC";
 			}
 		});
 
