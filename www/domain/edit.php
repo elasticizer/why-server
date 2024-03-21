@@ -212,6 +212,8 @@ include find('./component/sidebar.php');
 			// 找到名稱和簡介欄位
 			var nameField = document.getElementById("Name");
 			var introField = document.getElementById("Intro");
+			var IdentifierField = document.getElementById("Identifier");
+
 
 			// 檢查名稱和簡介欄位是否為空
 			if (nameField.value.trim() === "" || introField.value.trim() === "" || IdentifierField.value.trim() === "") {
