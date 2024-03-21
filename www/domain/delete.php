@@ -8,4 +8,4 @@ $statement = connect()->prepare("DELETE FROM {$table} WHERE SN = ?");
 
 $statement->execute([$sn]);
 
-header('Location: view.php');
+header('Location: index.php');

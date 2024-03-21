@@ -8,7 +8,7 @@ $page = $_GET['page'] ?? 1; //獲取頁數 ??是 三元運算子的:意思
 $table = 'Domain';
 $statement = connect()->prepare(
 	sprintf(
-		"SELECT COUNT(*) FROM %s WHERE {$table}.SN || {$table}.Name || {$table}.Intro LIKE ? ",
+		"SELECT COUNT(*) FROM %s WHERE {$table}.Identifier || {$table}.SN || {$table}.Name || {$table}.Intro LIKE ? ",
 		$table
 	)
 );
@@ -19,6 +19,7 @@ $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 $columns = [
 	"{$table}.SN" => '序號',
+	'Identifier' => '識別碼',
 	'Name' => '名稱',
 	'Intro' => '簡介',
 	'FirstName' => '建立者',
@@ -26,7 +27,7 @@ $columns = [
 ];
 $statement = connect()->prepare(
 	sprintf(
-		"SELECT %s FROM %s JOIN Staff ON {$table}.CreatorSN = Staff.SN WHERE {$table}.SN || {$table}.Name || {$table}.Intro LIKE ? LIMIT ?, ?",
+		"SELECT %s FROM %s JOIN Staff ON {$table}.CreatorSN = Staff.SN WHERE {$table}.Identifier || {$table}.SN || {$table}.Name || {$table}.Intro LIKE ? LIMIT ?, ?",
 
 		implode(', ', array_keys($columns)),
 		//implode('連接符號',陣列)，將陣列使用連結符號串成字串
@@ -53,16 +54,16 @@ include find('./component/sidebar.php');
 						<form
 							method="GET"
 							action="<?= $_SERVER['PHP_SELF'] ?>"
-							class="d-flex justify-content-center mb-3"
+							class="d-flex justify-content-start mb-3"
 						>
 
-							<div class="d-flex w-75">
+							<div class="d-flex  w-20">
 								<input
 									type="text"
 									name="keyword"
 									id="keyword"
 									placeholder="請輸入關鍵字搜尋"
-									class="form-control me-3"
+									class="form-control me-3 w-75"
 									value="<?= $_GET['keyword'] ?? '' ?>"
 								>
 								<button
@@ -88,14 +89,14 @@ include find('./component/sidebar.php');
 							><i data-feather="plus-circle"></i>&ensp;新增領域</a>
 						</section>
 						<!-- 列表 -->
-						<div class="table-responsive ">
+						<div class="table-responsive">
 							<table class="table table-sm table-striped table-hover text-nowrap mb-5 text-center align-middle">
 								<thead class="text-dark fs-4 border-bottom border border-2">
 									<tr>
 										<?php foreach (array_values($columns) as $column): ?>
 											<th class="border-bottom-0 fw-semibold mb-0 col-1.5"><?= $column ?></th>
 										<?php endforeach ?>
-										<th class="border-bottom-0 fw-semibold mb-0 text-center col-1">複製</th>
+
 										<th class="border-bottom-0 fw-semibold mb-0 text-center col-1">編輯</th>
 										<th class="border-bottom-0 fw-semibold mb-0 text-center col-1">刪除</th>
 
@@ -107,12 +108,7 @@ include find('./component/sidebar.php');
 											<?php foreach ($row as $column): ?>
 												<td class="border-bottom-0 mb-0"><?= $column ?></td>
 											<?php endforeach ?>
-											<td class="border-bottom-0 mb-0">
-												<a
-													href="edit.php?sn=<?= $row['SN'] ?>"
-													class="btn btn-primary m-1"
-												> <i data-feather="copy"></i></a>
-											</td>
+
 											<td class="border-bottom-0 mb-0">
 												<a
 													href="edit.php?sn=<?= $row['SN'] ?>"

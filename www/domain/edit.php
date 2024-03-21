@@ -23,11 +23,12 @@ include find('./component/sidebar.php');
 				<div class="d-flex justify-content-between">
 					<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
 					<div>
-					<a
-						type="submit"
-						href="index.php"
-						class="btn btn-primary <?= isset ($_GET['sn']) ? '' : '' ?>"
-					>回到列表頁</a></div>
+						<a
+							type="submit"
+							href="index.php"
+							class="btn btn-primary <?= isset ($_GET['sn']) ? '' : '' ?>"
+						>回到列表頁</a>
+					</div>
 				</div>
 				<form
 					action="<?= isset ($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>"
@@ -63,11 +64,32 @@ include find('./component/sidebar.php');
 							name="Name"
 							placeholder='請輸入名稱'
 							required
-							value='<?= isset ($_GET['sn']) ? $row['Name'] : "" ?>'
+							value='<?= isset($_GET['sn']) ? $row['Name'] : "" ?>'
 						>
 						<div
 							class="form-text"
 							id="nameFault"
+						></div>
+
+					</div>
+					<div class="mb-3">
+						<label
+							for="Identifier"
+							class="form-label"
+						>識別碼</label>
+						<input
+							type="text"
+							class="form-control"
+							id="Identifier"
+							name="Identifier"
+							placeholder="請輸入2~10個字"
+							minlength="2"
+							maxlength="10"
+							required
+						><?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>
+						<div
+							class="form-text"
+							id="IntroFault"
 						></div>
 					</div>
 					<div class="mb-3">
@@ -116,19 +138,20 @@ include find('./component/sidebar.php');
 							value='<?= isset ($_GET['sn']) ? $row['WhenLastEdited'] : " " ?>'
 						>
 					</div>
-
-					<button
-						type="submit"
-						class="btn btn-primary"
-						id="editFinsh"
-						onclick="event.preventDault, confirm=('您確定要新增該筆資料嗎?') && (location.href = index.href)"
-					><?= isset ($_GET['sn']) ? '修改完成' : '確定新增' ?></button>
-					<button
-						type="reset"
-						class="btn btn-danger <?= isset ($_GET['sn']) ? 'd-none' : '' ?>"
-					><i data-feather="rotate-cw"></i>
-					</button>
-
+					<div class="d-flex  justify-content-center">
+						<button
+							type="submit"
+							class="btn btn-primary "
+							id="editFinsh"
+							onclick="event.preventDault, confirm=('您確定要新增該筆資料嗎?') && (location.href = index.href)"
+						><?= isset ($_GET['sn']) ? '資料送出' : '確定新增' ?></button>
+						<br />
+						<button
+							type="reset"
+							class="btn btn-danger  <?= isset ($_GET['sn']) ? 'd-none' : '' ?>"
+						><i data-feather="rotate-cw"></i>重新填寫
+						</button>
+					</div>
 				</form>
 			</div>
 		</div>

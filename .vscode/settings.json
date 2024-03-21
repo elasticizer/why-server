@@ -79,5 +79,19 @@
 	"todo-tree.general.showActivityBarBadge": true,
 	"todo-tree.regex.subTagRegex": "^<(.*)>",
 	"todo-tree.tree.groupedByTag": true,
-	"todo-tree.tree.scanMode": "workspace"
+	"todo-tree.tree.scanMode": "workspace",
+	"sqltools.connections": [
+		{
+			"previewLimit": 50,
+			"driver": "SQLite",
+			"name": "Why",
+			"database": "C:\\Users\\chun\\Desktop\\why.db"
+		},
+		{
+			"previewLimit": 50,
+			"driver": "SQLite",
+			"name": "why",
+			"database": "${workspaceFolder:why-server}/data/why.db"
+		}
+	]
 }

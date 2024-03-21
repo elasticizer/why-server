@@ -3,7 +3,7 @@ require '../arranger.php';
 
 header('Location: index.php');
 
-if (isset ($_POST['Name'])) {
-	$statement = connect()->prepare("INSERT INTO `Domain` (`Name`, `Intro`, `CreatorSN`) VALUES (?, ?, 1)");
-	$statement->execute([$_POST['Name'], $_POST['Intro']]);
+if (isset($_POST['Identifier'], $_POST['Name'], $_POST['Intro'], $_SESSION['sn'])) {
+	$statement = connect()->prepare("INSERT INTO `Domain` (`Identifier`, `Name`, `Intro`, `CreatorSN`) VALUES (?, ?, ?, ?)");
+	$statement->execute([$_POST['Identifier'], $_POST['Name'], $_POST['Intro'], $_SESSION['sn']]);
 }
