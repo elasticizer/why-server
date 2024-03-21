@@ -66,7 +66,6 @@ include find('./component/sidebar.php');
 							placeholder='請輸入名稱'
 							required
 							value='<?= isset ($_GET['sn']) ? $row['Name'] : "" ?>'
-
 						>
 						<div
 							class="form-text"
@@ -102,7 +101,7 @@ include find('./component/sidebar.php');
 						>簡介</label>
 						<textarea
 							type="text"
-							class="form-control required"
+							class="form-control"
 							id="Intro"
 							name="Intro"
 							placeholder="請輸入2~10個字"
@@ -209,6 +208,11 @@ include find('./component/sidebar.php');
 			var introField = document.getElementById("Intro");
 			var IdentifierField = document.getElementById("Identifier");
 
+		// 添加點擊事件監聽器
+		editFinishButton.addEventListener("click", function (event) {
+			// 找到名稱和簡介欄位
+			var nameField = document.getElementById("Name");
+			var introField = document.getElementById("Intro");
 
 			// 檢查名稱和簡介欄位是否為空
 			if (nameField.value.trim() === "" || introField.value.trim() === "" || IdentifierField.value.trim() === "") {

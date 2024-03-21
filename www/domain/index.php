@@ -96,7 +96,6 @@ include find('./component/sidebar.php');
 										<?php foreach (array_values($columns) as $column): ?>
 											<th class="border-bottom-0 fw-semibold mb-0 col-1.5"><?= $column ?></th>
 										<?php endforeach ?>
-
 										<th class="border-bottom-0 fw-semibold mb-0 text-center col-1">編輯</th>
 										<th class="border-bottom-0 fw-semibold mb-0 text-center col-1">刪除</th>
 
@@ -108,7 +107,6 @@ include find('./component/sidebar.php');
 											<?php foreach ($row as $column): ?>
 												<td class="border-bottom-0 mb-0"><?= $column ?></td>
 											<?php endforeach ?>
-
 											<td class="border-bottom-0 mb-0">
 												<a
 													href="edit.php?sn=<?= $row['SN'] ?>"
