@@ -19,6 +19,7 @@ $columns = [
 	"{$table}.SN" => '序號',
 	'Identifier' => '識別碼',
 	'Name' => '名稱',
+	'Description' => '說明',
 	'DiscountRate' => '折扣比率',
 	'FirstName' => '建立者'
 ];
@@ -28,9 +29,8 @@ $statement = connect()->prepare(
 		implode(', ', array_keys($columns)),
 		$table,
 		$sortValue
-		)
-	);
-	// "SELECT %s FROM %s JOIN Staff ON {$table}.CreatorSN = Staff.SN WHERE {$table}.Name LIKE ? LIMIT ?, ?",
+	)
+);
 
 $statement->execute(['%' . ($_GET['keyword'] ?? '') . '%', $start, $limit]);
 
@@ -88,24 +88,26 @@ include find('./component/sidebar.php');
 					</div>
 					<!-- 列表 -->
 					<div class="table-responsive">
-						<table class="table text-nowrap mb-0 align-middle">
+						<table class="table text-nowrap mb-0 align-middle table-hover">
 							<thead class="text-dark fs-4">
 								<tr>
 									<?php foreach (array_values($columns) as $column) : ?>
 										<th class="border-bottom-0 fw-semibold mb-0"><?= $column ?></th>
+									<?php endforeach ?>
+									<th class="border-bottom-0 fw-semibold mb-0 text-center">編輯</th>
+									<th class="border-bottom-0 fw-semibold mb-0 text-center">刪除</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php while ($row = $statement->fetch(PDO::FETCH_ASSOC)) : ?>
+									<tr>
+										<?php foreach ($row as $column) : ?>
+											<td class="border-bottom-0 mb-0 "><?= $column ?></td>
 										<?php endforeach ?>
-										<th class="border-bottom-0 fw-semibold mb-0"></th>
-										<th class="border-bottom-0 fw-semibold mb-0"></th>
-									</tr>
-								</thead>
-								<tbody>
-									<?php while ($row = $statement->fetch(PDO::FETCH_ASSOC)) : ?>
-										<tr>
-											<?php foreach ($row as $column) : ?>
-											<td class="border-bottom-0 mb-0"><?= $column ?></td>
-										<?php endforeach ?>
-										<td class="text-end border-bottom-0 mb-0">
+										<td class="border-bottom-0 text-center">
 											<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-primary m-1"><i data-feather="edit"></i> 編輯</a>
+										</td>
+										<td class="border-bottom-0 text-center">
 											<a href="javascript: deleteOne(<?= $row['SN'] ?>)" class="btn btn-danger m-1"><i data-feather="trash-2"></i> 刪除</a>
 										</td>
 									</tr>

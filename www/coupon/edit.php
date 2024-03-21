@@ -25,7 +25,10 @@ if (isset($_GET['sn'])) {
 	<div class="container-fluid">
 		<div class="card">
 			<div class="card-body">
-				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
+				<div class='d-flex justify-content-between'>
+					<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
+					<a href="index.php" class="btn btn-primary m-1">回到列表頁</a>
+				</div>
 				<form action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST" id="form1">
 					<!-- SN -->
 					<?php if (isset($_GET['sn'])) : ?>

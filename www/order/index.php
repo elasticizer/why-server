@@ -84,7 +84,8 @@ include find('./component/sidebar.php');
 										<?php foreach ($columnNames as $column) : ?>
 											<th class="border-bottom-0 fw-semibold mb-0"><?= $column ?></th>
 										<?php endforeach ?>
-										<th></th>
+										<th class="border-bottom-0 fw-semibold mb-0 text-center">編輯</th>
+									<th class="border-bottom-0 fw-semibold mb-0 text-center">刪除</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -93,13 +94,12 @@ include find('./component/sidebar.php');
 											<?php foreach ($row as $column) : ?>
 												<td class="border-bottom-0 mb-0"><?= $column ?></td>
 											<?php endforeach ?>
-
-											<td>
-												<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-primary m-1 "><i data-feather="edit"></i> 編輯</a>
-
-												<a href="javascript: deleteOne(<?= $row['SN'] ?>)" class="btn btn-danger m-1"><i data-feather="trash-2"></i> 刪除</a>
-
-											</td>
+											<td class="border-bottom-0 text-center">
+											<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-primary m-1"><i data-feather="edit"></i> 編輯</a>
+										</td>
+										<td class="border-bottom-0 text-center">
+											<a href="javascript: deleteOne(<?= $row['SN'] ?>)" class="btn btn-danger m-1"><i data-feather="trash-2"></i> 刪除</a>
+										</td>
 										</tr>
 									<?php endwhile ?>
 								</tbody>
