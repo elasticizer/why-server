@@ -22,14 +22,11 @@ if (isset($_GET['sn'])) {
 
 <div class="body-wrapper">
 	<?php include find('./component/header.php') ?>
-
 	<div class="container-fluid">
-
-
 		<div class="card">
 			<div class="card-body">
 				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
-				<form action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
+				<form action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST" id="form1">
 					<!-- SN -->
 					<?php if (isset($_GET['sn'])) : ?>
 						<div class="mb-3">
@@ -60,26 +57,32 @@ if (isset($_GET['sn'])) {
 						</div>
 						<div class="form-text" id="discountError"></div>
 					</div>
+					<!-- WhenIssued -->
+					<?php if (isset($_GET['sn'])) : ?>
+						<div class="mb-3">
+							<label class="form-label">建立時間</label>
+							<input type="text" class="form-control" value="<?= localize($row['WhenCreated']) ?>" readonly>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">開始時間</label>
+							<input type="text" class="form-control" value="<?= localize($row['WhenStarted']) ?>" readonly>
+						</div>
+					<?php endif ?>
 					<!-- WhenEnded -->
 					<div class="mb-3">
 						<label for="WhenEnded" class="form-label">結束時間</label>
 						<?php
-						$today = date("Y-m-d");
+						$today = date("Y-m-d H:i:s");
 						?>
-						<input type="date" class="form-control" id="WhenEnded" name="WhenEnded" value="<?= isset($_GET['sn']) ? $row['WhenEnded'] : $today ?>">
+						<input type="datetime-local" class="form-control" id="WhenEnded" name="WhenEnded" value="<?= isset($_GET['sn']) ? $row['WhenEnded'] : $today ?>">
 						<div class="form-text" id="whenEndedError"></div>
 					</div>
-
 					<button type="submit" class="btn btn-primary m-1"><?= isset($_GET['sn']) ? '確定修改' : '確定新增' ?></button>
-					<button href="view.php" class="btn btn-danger m-1">回到列表頁</button>
 				</form>
-
 			</div>
 		</div>
-
 	</div>
 </div>
-
 
 <script>
 	document.addEventListener('DOMContentLoaded', () => {
@@ -91,6 +94,11 @@ if (isset($_GET['sn'])) {
 
 		const whenEndedInput = document.getElementById('WhenEnded');
 		const whenEndedError = document.getElementById('whenEndedError');
+
+		const form = document.getElementById('form1');
+		const successModal = document.getElementById('successModal');
+		const failureModal = document.getElementById('failureModal');
+
 		// Name
 		nameInput.addEventListener('input', () => {
 			if (nameInput.value.length < 3) {
@@ -133,5 +141,8 @@ if (isset($_GET['sn'])) {
 				whenEndedInput.style.border = "1px solid #CCC";
 			}
 		});
+
+
+
 	})
 </script>

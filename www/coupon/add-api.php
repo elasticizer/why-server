@@ -2,14 +2,14 @@
 
 require '../arranger.php';
 
-header('Location: view.php');
+header('Location: index.php');
 header('Content-Type: application/json');
 
 $output = [
 	'success' => false,
-	'postData' => $_POST,
+	// 'postData' => $_POST,
 	'error' => '',
-	'code' => 0,
+	// 'code' => 0,
 ];
 
 if (!empty($_POST['Name'])) {
@@ -30,6 +30,7 @@ if (!empty($_POST['Name'])) {
 	if ($existingCoupon) {
 		$isPass = false;
 		$output['error'] = '該優惠券名稱已經存在。';
+		$output['showModal'] = true;
 	}
 
 	if ($isPass) {

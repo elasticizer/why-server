@@ -2,14 +2,14 @@
 
 require '../arranger.php';
 
-header('Location: view.php');
+header('Location: index.php');
 header('Content-Type: application/json');
 
 $output = [
 	'success' => false,
-	'postData' => $_POST,
+	// 'postData' => $_POST,
 	'error' => '',
-	'code' => 0,
+	// 'code' => 0,
 ];
 
 
