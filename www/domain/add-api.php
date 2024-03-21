@@ -1,7 +1,7 @@
 <?php
 require '../arranger.php';
 
-header('Location: view.php');
+header('Location: index.php');
 
 if (isset ($_POST['Name'])) {
 	$statement = connect()->prepare("INSERT INTO `Domain` (`Name`, `Intro`, `CreatorSN`) VALUES (?, ?, 1)");

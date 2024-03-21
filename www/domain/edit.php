@@ -21,12 +21,21 @@ include find('./component/sidebar.php');
 	<div class="container-fluid">
 		<div class="card">
 			<div class="card-body">
-				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
+				<div class="d-flex justify-content-between">
+					<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
+					<div>
+					<a
+						type="submit"
+						href="index.php"
+						class="btn btn-primary <?= isset ($_GET['sn']) ? '' : '' ?>"
+					>回到列表頁</a></div>
+				</div>
 				<form
 					action="<?= isset ($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>"
 					method="POST"
 				>
-					<!-- <div class="mb-3">
+
+					<div class="mb-3 <?= isset ($_GET['sn']) ? '' : 'd-none' ?>">
 						<label
 							for="Number"
 							class="form-label"
@@ -40,20 +49,22 @@ include find('./component/sidebar.php');
 							value='<?= isset ($_GET['sn']) ? $row['SN'] : "" ?>'
 						>
 
-					</div> -->
+					</div>
 					<div class="mb-3">
+
 						<label
 							for="Name"
 							class="form-label"
 						>領域名稱</label>
+
 						<input
 							type="text"
-							class="form-control required"
+							class="form-control "
 							id="Name"
 							name="Name"
 							placeholder='請輸入名稱'
+							required
 							value='<?= isset ($_GET['sn']) ? $row['Name'] : "" ?>'
-
 						>
 						<div
 							class="form-text"
@@ -67,31 +78,57 @@ include find('./component/sidebar.php');
 						>簡介</label>
 						<textarea
 							type="text"
-							class="form-control required"
+							class="form-control"
 							id="Intro"
 							name="Intro"
-							placeholder="請輸入內容"
+							placeholder="請輸入2~10個字"
 							minlength="2"
 							maxlength="10"
+							required
 						><?= isset ($_GET['sn']) ? $row['Intro'] : "" ?></textarea>
 						<div
 							class="form-text"
 							id="IntroFault"
 						></div>
 					</div>
+					<div class="mb-3 <?= isset ($_GET['sn']) ? '' : 'd-none' ?>">
+						<label
+							for="datetime"
+							class="form-label"
+						>建立時間</label>
+						<input
+							type="datetime"
+							class="form-control"
+							id="datetime"
+							disabled
+							value='<?= isset ($_GET['sn']) ? $row['WhenCreated'] : " " ?>'
+						>
+					</div>
+					<div class="mb-3 <?= isset ($_GET['sn']) ? '' : 'd-none' ?>">
+						<label
+							for="datetime"
+							class="form-label"
+						>最後編輯時間</label>
+						<input
+							type="datetime"
+							class="form-control"
+							id="datetime"
+							disabled
+							value='<?= isset ($_GET['sn']) ? $row['WhenLastEdited'] : " " ?>'
+						>
+					</div>
 
 					<button
 						type="submit"
 						class="btn btn-primary"
 						id="editFinsh"
-						data-bs-toggle="modal"
-						data-bs-target="#staticBackdrop"
-					><?= isset ($_GET['sn']) ? '修改完成' : '提交表單' ?></button>
+						onclick="event.preventDault, confirm=('您確定要新增該筆資料嗎?') && (location.href = index.href)"
+					><?= isset ($_GET['sn']) ? '修改完成' : '確定新增' ?></button>
 					<button
-						type="submit"
-						class="btn btn-primary"
-					><?= isset ($_GET['sn']) ? '返回上一頁' : '返回上一頁' ?></button>
-
+						type="reset"
+						class="btn btn-danger <?= isset ($_GET['sn']) ? 'd-none' : '' ?>"
+					><i data-feather="rotate-cw"></i>
+					</button>
 
 				</form>
 			</div>
@@ -114,7 +151,7 @@ include find('./component/sidebar.php');
 	const IntroEl = document.getElementById('Intro');
 	const IntroFaultEl = document.getElementById('IntroFault');
 	IntroEl.addEventListener('input', function () {
-		if (IntroEl.value.length < 3 ) {
+		if (IntroEl.value.length < 2) {
 			IntroEl.style.border = "2px solid red";
 			IntroFaultEl.textContent = '請輸入2~10個字';
 			IntroFaultEl.style.color = "red";
@@ -123,8 +160,24 @@ include find('./component/sidebar.php');
 			IntroFaultEl.textContent = '';
 		}
 	})
+	document.addEventListener("DOMContentLoaded", function () {
+		// 找到修改完成按鈕
+		var editFinishButton = document.getElementById("editFinsh");
 
+		// 添加點擊事件監聽器
+		editFinishButton.addEventListener("click", function (event) {
+			// 找到名稱和簡介欄位
+			var nameField = document.getElementById("Name");
+			var introField = document.getElementById("Intro");
 
-
+			// 檢查名稱和簡介欄位是否為空
+			if (nameField.value.trim() === "" || introField.value.trim() === "") {
+				// 如果有任一欄位為空，阻止表單提交
+				event.preventDefault();
+				// 請求用戶填寫所有必填欄位
+				alert("名稱和簡介欄位不得為空！");
+			}
+		});
+	});
 
 </script>
