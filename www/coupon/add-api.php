@@ -30,13 +30,12 @@ if (!empty($_POST['Name'])) {
 	if ($existingCoupon) {
 		$isPass = false;
 		$output['error'] = '該優惠券名稱已經存在。';
-		// $output['showModal'] = true;
 	}
 
 	if ($isPass) {
 		$table = 'Coupon';
 		$statement = connect()->prepare("INSERT INTO {$table}
-	(`Identifier`, `Name`, `Description`, `DiscountRate`, `WhenEnded`, `CreatorSN`) VALUES (?, ?, ?, ?, ?, 10)");
+	(`Identifier`, `Name`, `Description`, `DiscountRate`, `WhenEnded`, `CreatorSN`) VALUES (?, ?, ?, ?, ?, -3)");
 		$statement->execute([
 			$_POST['Identifier'],
 			$_POST['Name'],

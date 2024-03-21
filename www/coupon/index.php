@@ -24,13 +24,13 @@ $columns = [
 ];
 $statement = connect()->prepare(
 	sprintf(
-		// "SELECT %s FROM %s JOIN Staff ON {$table}.CreatorSN = Staff.SN WHERE {$table}.Name LIKE ? LIMIT ?, ?",
 		"SELECT %s FROM %s JOIN Staff ON {$table}.CreatorSN = Staff.SN WHERE {$table}.Name LIKE ? ORDER BY {$table}.%s LIMIT ?, ?",
 		implode(', ', array_keys($columns)),
 		$table,
 		$sortValue
-	)
-);
+		)
+	);
+	// "SELECT %s FROM %s JOIN Staff ON {$table}.CreatorSN = Staff.SN WHERE {$table}.Name LIKE ? LIMIT ?, ?",
 
 $statement->execute(['%' . ($_GET['keyword'] ?? '') . '%', $start, $limit]);
 
@@ -93,15 +93,15 @@ include find('./component/sidebar.php');
 								<tr>
 									<?php foreach (array_values($columns) as $column) : ?>
 										<th class="border-bottom-0 fw-semibold mb-0"><?= $column ?></th>
-									<?php endforeach ?>
-									<th class="border-bottom-0 fw-semibold mb-0"></th>
-									<th class="border-bottom-0 fw-semibold mb-0"></th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php while ($row = $statement->fetch(PDO::FETCH_ASSOC)) : ?>
-									<tr>
-										<?php foreach ($row as $column) : ?>
+										<?php endforeach ?>
+										<th class="border-bottom-0 fw-semibold mb-0"></th>
+										<th class="border-bottom-0 fw-semibold mb-0"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php while ($row = $statement->fetch(PDO::FETCH_ASSOC)) : ?>
+										<tr>
+											<?php foreach ($row as $column) : ?>
 											<td class="border-bottom-0 mb-0"><?= $column ?></td>
 										<?php endforeach ?>
 										<td class="text-end border-bottom-0 mb-0">
