@@ -15,7 +15,7 @@ $output = [
 	'limits' => $data, #除錯用
 ];
 
-$query = sprintf("SELECT c1.SN, c1.Name, c1.ApproverSN, Intro, WhenApplied, WhenLaunched, Price, TeacherSN, u1.FirstName, u1.LastName
+$query = sprintf("SELECT c1.SN, c1.Name, c1.ApproverSN,c1.Intro, WhenCreated, WhenLaunched, Price, TeacherSN, u1.Nickname
 FROM Course c1
 JOIN User u1 ON c1.teacherSN = u1.SN
 ORDER BY c1.%s
@@ -27,8 +27,8 @@ while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
 
 	// $promotionName = connect()->query(sprintf("SELECT p1.Name FROM Promotion p1 join Course c1 on c1.SN= p1.CourseSN where c1.SN =" . $row['SN'] . " && CURRENT_DATE() BETWEEN p1.WhenStarted AND p1.WhenEnded;"))->fetch(PDO::FETCH_ASSOC);
 	$row['promotionName'] = $promotionName ?? '無';
-	$states = (!empty($row['ApproverSN']) ? (!empty($row['WhenLaunched']) ? ['btn-dark', '<i data-feather="corner-right-down"></i>下架', '<span class="text-success" >已上架</span>'] : ['btn-warning', '<i data-feather=upload></i>上架', '下架']) : ['btn-success', ' <i data-feather="check-circle"></i>核准', '<span class ="text-danger">未審核</span>']);
-	$orderedRoll = [$row['SN'], $row['Name'], $row['LastName'] . $row['FirstName'], $row['Price'], $states, $row['promotionName'], $soldAmount];
+	$states = (isset($row['ApproverSN']) ? (!empty($row['WhenLaunched']) ? ['btn-dark', '<i data-feather="corner-right-down"></i>下架', '<span class="text-success" >已上架</span>'] : ['btn-warning', '<i data-feather=upload></i>上架', '下架']) : ['btn-success', ' <i data-feather="check-circle"></i>核准', '<span class ="text-danger">未審核</span>']);
+	$orderedRoll = [$row['SN'], $row['Name'],$row['Nickname'], $row['Price'], $states, $row['promotionName'], $soldAmount];
 	array_push($allRows,$orderedRoll);
 }
 

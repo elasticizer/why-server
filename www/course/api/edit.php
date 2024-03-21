@@ -1,6 +1,6 @@
 <?php
 include __DIR__ . '/../../arranger.php';
-$dir = __DIR__ . '/../../../files/'; # 存放檔案的資料夾
+$dir = __DIR__ . '/files/'; # 存放檔案的資料夾
 $exts = [   # 檔案類型的篩選 給附檔名
 	'image/jpeg' => '.jpg',
 	'image/png' =>  '.png',
@@ -94,6 +94,7 @@ if (!empty($_FILES) and !empty($_FILES['imgFile']) and $_FILES['imgFile']['error
 		$_POST['Price'],
 		$_POST['SN'],
 	]);
+	$output['success'] = 'Course成功的筆數' . $stmt->rowCount() . 'File成功的筆數' .'沒有更動File';
 }
 
 

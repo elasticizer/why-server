@@ -1,7 +1,7 @@
 <?php
 include __DIR__ . '/../../arranger.php';
 
-$dir = __DIR__ . '/../../../files/'; # 存放檔案的資料夾
+$dir = __DIR__ . '/files/'; # 存放檔案的資料夾
 $exts = [   # 檔案類型的篩選 給附檔名
 	'image/jpeg' => '.jpg',
 	'image/png' =>  '.png',
@@ -15,6 +15,7 @@ $output = [
 	'postData' => $_POST, #除錯用
 	'error' => '',
 	'code' => 0,
+	'id' => '',
 ];
 
 $Approver = isset($_POST['check']) ? 2 : null;
@@ -41,19 +42,21 @@ VALUES(?,?,?,?,?)";
 			//開始寫進Course表
 			$ThumbnailSN = connect()->query(sprintf("select SN from File order by SN DESC limit 1"))->fetch(PDO::FETCH_ASSOC);
 			$sql =
-				"INSERT INTO `Course`(`Name`, `Intro`, `Syllabus`, `TeacherSN`,`ThumbnailSN`,`Price`,`DomainSN`,`WhenApplied`,ApproverSN)
+				"INSERT INTO `Course`(`Name`, `Intro`,`Identifier`, `Syllabus`, `TeacherSN`, DailySN,`ThumbnailSN`,`Price`,`DomainSN`,`WhenCreated`,ApproverSN)
 VALUES (
 ?,?,?,?,
-?,
 ?,?,
+?,?,?,
 datetime('now'),
 ?)";
 			$stmt = connect()->prepare($sql);
 			$stmt->execute([
 				$_POST['Name'],
 				$_POST['Intro'],
+				strval(uniqid()),
 				$_POST['Syllabus'],
 				$_POST['TeacherSN'],
+				1,
 				$ThumbnailSN['SN'],
 				$_POST['Price'],
 				$_POST['DomainSN'],
@@ -61,8 +64,12 @@ datetime('now'),
 			]);
 
 			$output['success'] = 'Course成功的筆數' . $stmt->rowCount() . 'File成功的筆數' . $stmtFile->rowCount();
+			$id = connect()->query(sprintf("select SN from Course order by SN DESC limit 1"))->fetch(PDO::FETCH_ASSOC);
+			$output['id'] = $id['SN'];
 		}
 	}
+} else {
+	$output['error'] = '未上傳圖片';
 }
 
 

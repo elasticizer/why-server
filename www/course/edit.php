@@ -1,4 +1,5 @@
 <?php
+
 $title = (isset($_GET['courseID']) ? '編輯' : '新增') . '課程';
 $layout = './layout/layout.php';
 
@@ -11,14 +12,18 @@ require '../arranger.php';
 include find('./component/sidebar.php');
 
 $allDomain = connect()->query('SELECT * FROM `Domain`;')->fetchAll(PDO::FETCH_ASSOC);
-$allTeachers = connect()->query('SELECT FirstName,LastName,SN FROM `User` WHERE ApproverSN is not null;')->fetchAll(PDO::FETCH_ASSOC);
+$allTeachers = connect()->query('SELECT Nickname,SN FROM `User` WHERE WhenQualified is not null;')->fetchAll(PDO::FETCH_ASSOC);
 $r = connect()->query("SELECT * FROM Course WHERE SN= $courseID")->fetch(PDO::FETCH_ASSOC);
 if (!empty($r['ThumbnailSN'])) {
 	$r_file = connect()->query("select Filename,Extension from File where SN =" . $r['ThumbnailSN'])->fetch(PDO::FETCH_ASSOC);
 	$file_path = $r_file['Filename'] . $r_file['Extension'];
+	$file_content = file_get_contents(__DIR__ . "/api/files/$file_path");
+	$base64_file = base64_encode($file_content); //icacls "C:\xampp\htdocs\why\why-server\www\course\api\files" /grant BUILTIN\Users:(OI)(CI)(M) /T
+
 }
 
 $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark', '<i data-feather="corner-right-down"></i>下架', '<span class="text-success" >已上架</span>'] : ['btn-warning', '<i data-feather=upload></i>上架', '已下架']) : ['btn-success', ' <i data-feather="check-circle"></i>核准', '<span class ="text-danger">未審核</span>']);
+
 ?>
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.3/dist/quill.snow.css" rel="stylesheet" />
 <style>
@@ -28,15 +33,10 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 </style>
 <div class="body-wrapper">
 	<?php include find('./component/header.php') ?>
-	<?php if ($courseID == 0) //如果不是點編輯紐進來的就是新增
-	{
-	} else {
-	} ?>
-
 	<div class="container-fluid">
 		<div class="card">
 			<div class="card-body">
-				<a class="btn btn-primary me-3 " href="view.php?page=<?= $page ?>&orderValue=<?= $orderValue ?>&limitPerpage=<?= $limitPerpage ?>"><i data-feather=arrow-left></i>回到上一頁</a>
+				<a class="btn btn-primary me-3 " href="index.php?page=<?= $page ?>&orderValue=<?= $orderValue ?>&limitPerpage=<?= $limitPerpage ?>"><i data-feather=arrow-left></i>回到上一頁</a>
 				<?= $courseID == 0 ? '' : '<a class="btn btn-primary" href="javascript:location.reload()"><i data-feather=refresh-ccw></i>重製修改</a>' ?>
 				<h5 class="card-title fw-semibold mb-4 pt-3 "><?= $title ?></h5>
 				<div class="mb-3 hstack gap-3">
@@ -44,7 +44,7 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 						<label class="form-label text-nowrap">狀態</label>
 						<label class="form-control"><?= $states[2] ?></label>
 
-						<a class="btn btn-danger text-nowrap btn-lg" data-bs-toggle="modal" data-bs-target='#deleteModal' onclick="javascript:deleteCourse(<?= $r['SN'] ?>)"><i data-feather=upload></i>刪除課程</a>
+						<a class="btn btn-danger text-nowrap btn-lg" data-bs-toggle="modal" data-bs-target='#approveModal' onclick="javascript:deleteCourse(<?= $r['SN'] ?>)"><i data-feather=upload></i>刪除課程</a>
 						<a class="btn btn-primary  text-nowrap btn-lg"><i data-feather=upload></i>促銷</a>
 						<!-- Button trigger modal -->
 						<a class="btn btn-lg text-nowrap <?= $states[0] ?> " onclick="javascript:approveCourse('<?= $r['SN'] ?>', '<?= isset($r['ApproverSN']) ?: 0 ?>','<?= isset($r['WhenLaunched']) ?: 0 ?>')" data-bs-toggle="modal" data-bs-target="#approveModal"><?= $states[1] ?>
@@ -64,7 +64,7 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 						<input type="text" class="form-control" id="Name" name="Name" value="<?php if ($courseID != 0) {
 																																										echo $r['Name'];
 																																									} ?>">
-						<!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
+						<div class="form-text text-danger d-none">請輸入標題</div>
 					</div>
 					<div class="mb-3">
 						<label for="DomainSN" class="form-label">課程類別</label>
@@ -96,33 +96,30 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 						<textarea type="text" class="form-control" id="Intro" name="Intro" rows="3"><?php if ($courseID != 0) {
 																																													echo $r['Intro'];
 																																												} ?></textarea>
-					</div>
-					<div class="mb-3">
-						<label for="Syllabus" class="form-label">課綱</label>
-						<textarea type="text" class="form-control" id="Syllabus" name="Syllabus" cols="30" rows="10" hidden></textarea>
-						<div id="editor" class="<?php if ($courseID != 0) {
-																			echo "d-none";
-																		} ?>">
-						</div>
+						<div class="form-text text-danger d-none">請輸入簡介</div>
 
 					</div>
+
 					<div class="mb-3">
 						<label for="Price" class="form-label">價格</label>
 						<input type="number" class="form-control" id="Price" name="Price" value="<?php if ($courseID != 0) {
 																																												echo $r['Price'];
 																																											}; ?>">
+						<div class="form-text text-danger d-none">請輸入價格</div>
+
 					</div>
 					<div class="mb-3">
 						<label for="TeacherSN" class="form-label">教師</label>
 						<select class="form-select" name="TeacherSN" id="TeacherSN">
 							<?php foreach ($allTeachers as $teacher) : ?>
-								<option value="<?= $teacher['SN'] ?>"> <?= $teacher['LastName'] . $teacher['FirstName'] ?> </option>
+								<option value="<?= $teacher['SN'] ?>"> <?= $teacher['Nickname'] ?> </option>
 							<?php endforeach; ?>
 						</select>
 					</div>
 					<div class="mb-3">
 						<label for="imgFile" class="form-label w-100">圖片<div class="form-control">上傳圖片</div></label>
 						<input hidden class="form-control" type="file" id="imgFile" accept="image/jpeg,image/png,image/webp" multiple="false" onchange="showTemp(event)" name="imgFile" />
+
 						<!-- 接受的檔案類型
 						一個隱藏的input來放原始圖片ThumbnailSN-->
 						<?php if ($courseID != 0 && !empty($r['ThumbnailSN'])) : ?>
@@ -132,8 +129,26 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 
 					<div><!-- 空的img或原始圖片-->
 						<img class="mb-3" src="<?php if ($courseID != 0) {
-																			echo (__DIR__ . "/api/files/" . $file_path);
+																			echo ('data:image/jpeg;base64,' . $base64_file);
 																		} ?>" alt="" id="myimg" width="100%" />
+					</div>
+					<div class="mb-3">
+						<label for="Syllabus" class="form-label">課綱</label>
+						<?php if ($courseID != 0) : ?>
+							<a class="btn btn-primary me-3 btn-sm" onclick="javascript:removeQuillContent();this.parentElement.lastElementChild.classList.remove('d-none');">展開</a>
+							<a class="btn btn-primary me-3 btn-sm" onclick="javascript:addQuillContent();this.parentElement.lastElementChild.classList.add('d-none');">收起</a>
+						<?php endif; ?>
+
+						<div id="editor" class="<?php if ($courseID != 0) {
+																			echo "d-none";
+																		} ?>">
+						</div>
+						<textarea type="text" class="form-control" id="Syllabus" name="Syllabus" cols="30" rows="10" hidden></textarea>
+						<div class="form-text text-danger d-none">請輸入課綱</div>
+						<?php if ($courseID != 0) : ?>
+							<a class="btn btn-primary me-3 btn-sm d-none " onclick="javascript:addQuillContent();this.classList.add('d-none');">收起</a>
+						<?php endif; ?>
+
 					</div>
 					<?php if ($courseID == 0) : ?>
 						<div class="mb-3 form-check">
@@ -206,17 +221,16 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 	});
 
 
-
+	let semanticHTML;
 
 	quill.on('text-change', function(delta, oldDelta, source) {
 		if (source === 'user') {
-			let semanticHTML = quill.getSemanticHTML();
-			// console.log(semanticHTML);
+			semanticHTML = quill.getSemanticHTML();
 		}
 	});
 	let quillContent = document.querySelector('#editor > div');
 	// console.log(quillContent);
-	quillContent.classList.add('quillContent')
+	quillContent.classList.add('quillContent');
 
 	let SyllabusEl = document.querySelector('#Syllabus');
 
@@ -230,15 +244,15 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 		function delay(ms) {
 			return new Promise(r => setTimeout(r, ms));
 		}
+		let Syllabus = `<?= $r['Syllabus']; ?>`;
 		delay(2000).then(() => {
-			let Syllabus = '<?= $r['Syllabus']; ?>';
 			quillContent.innerHTML = Syllabus;
 			SyllabusEl.innerHTML = Syllabus;
 			let videoEL = quillContent.querySelector('iframe');
 			console.log(videoEL);
 			if (videoEL) {
 				console.log(1111);
-				videoEL.onload=(e)=>{
+				videoEL.onload = (e) => {
 					quillContent.parentElement.classList.remove('d-none');
 					console.log('22222');
 				}
@@ -246,26 +260,48 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 				quillContent.parentElement.classList.remove('d-none');
 			}
 		});
-
-
-
 	<?php endif; ?>
-</script>
 
+	function removeQuillContent() {
+		quillContent.classList.remove('quillContent');
+	}
+
+	function addQuillContent() {
+		if (!quillContent.classList.contains('quillContent')) {
+			quillContent.classList.add('quillContent');
+		}
+	};
+</script>
+<!-- form -->
 <script>
 	let imgFile = document.getElementById('imgFile');
 
 	function sendData(e) {
 		e.preventDefault();
 		// 防止送出表單重整
-		// log看一下editCourse表單送出的資料
+
+		let frontCheck = true;
+		SyllabusEl.innerHTML = semanticHTML;
 		const editCourseFD = new FormData(document.createCourse);
+
+		// log看一下editCourse表單送出的資料
 		for (let i of editCourseFD.entries()) {
 			console.log(i);
 		};
+
+		for (let v of editCourseFD.entries()) {
+			if (v[1] == false || v[1] == 'undefined') {
+				let element = document.getElementById(v[0]);
+				element.nextElementSibling.classList.remove('d-none');
+				frontCheck = false;
+			}
+
+		}
+
 		// 發ajax
 		<?php if ($courseID != 0) : ?>
 			// 編輯
+
 			fetch('api/edit.php', {
 					method: "POST",
 					body: editCourseFD,
@@ -281,18 +317,33 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 		<?php endif ?>
 		<?php if ($courseID == 0) : ?>
 			// 新增
-			fetch('api/add.php', {
-					method: "POST",
-					body: editCourseFD,
-				})
-				.then((r) => r.json())
-				.then((result) => {
-					if (result.success) {
-						alert('已新增課程');
-					} else {
-						alert("新增失敗");
-					}
+			if (frontCheck) {
+				fetch('api/add.php', {
+						method: "POST",
+						body: editCourseFD,
+					})
+					.then((r) => r.json())
+					.then((result) => {
+						if (result.success) {
+							alert('已新增課程');
+							location = `?courseID=${result.id}&page=<?= $page ?>&orderValue=<?= $orderValue ?>&limitPerpage=<?= $limitPerpage ?>`;
+							window.scroll({
+								top: 0,
+								left: 0,
+								behavior: 'smooth'
+							});
+						} else {
+							alert(`新增失敗，${result.error}`);
+						}
+					})
+			} else {
+				window.scroll({
+					top: 0,
+					left: 0,
+					behavior: 'smooth'
 				});
+				alert('尚有資料未輸入');
+			}
 		<?php endif ?>
 	}
 
@@ -331,11 +382,13 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 		}
 	}
 
-	// function deleteCourse(id) {
-	// 	let courseID = `課號 <span class="text-danger text-decoration-underline">${id}</span> ?`;
-	// 	modalTitle.innerHTML = '是否刪除課程'
-	// 	modalBody.innerHTML = '確認刪除課程?'
-	// 	deleteBtn.innerHTML = '下架';
-	// 	href = "./api/delete.php?courseID=" + courseID + "&page=<?= $page ?>&orderValue=<?= $orderValue ?>&limitPerpage=<?= $limitPerpage ?>";
-	// }
+	function deleteCourse(id) {
+		let courseID = `課號 <span class="text-danger text-decoration-underline">${id}</span> ?`;
+		modalTitle.innerHTML = '是否刪除課程'
+		modalBody.innerHTML = '確認刪除課程?'
+		approveBtn.innerHTML = '刪除';
+		// approveBtn.classList.add('btn-danger');
+
+		approveBtn.href = "api/delete.php?courseID=" + id + "&page=<?= $page ?>&orderValue=<?= $orderValue ?>&limitPerpage=<?= $limitPerpage ?>";
+	}
 </script>

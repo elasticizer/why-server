@@ -1,12 +1,13 @@
 <?php
-include __DIR__ . '/../parts/PDOconnect.php';
+include __DIR__ . '/../../arranger.php';
+$page = $_GET['page'] ?? 1;
+$orderValue = $_GET['orderValue'] ?? 'SN ASC';
+$limitPerpage = $_GET['limitPerpage'] ?? 10;
 
 $courseID = isset($_GET['courseID']) ? intval($_GET['courseID']) : 0;
 
-$pdo->query('DELETE FROM `course` WHERE courseID = '.$courseID);
+connect()->query('DELETE FROM `course` WHERE SN = '.$courseID);
 
-$backTo = './html-sort.php';
-if (!empty($_SERVER['HTTP_REFERER'])) {
-    $backTo = $_SERVER['HTTP_REFERER'];
-}
-header("Location: $backTo");//跳轉回編輯頁
+$backTo = "../index.php?page=$page&orderValue=$orderValue&limitPerpage=$limitPerpage?&d=1";
+
+header("Location: $backTo");

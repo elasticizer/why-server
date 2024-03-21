@@ -119,7 +119,7 @@ include find('./component/sidebar.php');
 								<a id="previousPage" class="btn btn-primary rounded-5">
 									<button class="page-link">上一頁</button>
 								</a>
-								<ul class="pagination -sm m-0" id="pageNumber">
+								<ul class="pagination -sm m-0" id="pageNumber" style="cursor: pointer;" >
 								</ul>
 
 								<a class="btn btn-primary rounded-5" id="nextPage">
@@ -327,17 +327,22 @@ include find('./component/sidebar.php');
 	previousPageBtn.onclick = (e) => {
 		if (page > 1) {
 			page--;
-			loadData(page, orderValue, limitPerpage, otherLimit);
+			loadData(page, orderValue,otherLimit);
 		}
 	};
 	nextPageBtn.onclick = (e) => {
 		if (page < totalPages) {
 			page++;
-			loadData(page, orderValue, limitPerpage, otherLimit);
+			loadData(page, orderValue,otherLimit);
 		}
 	};
+	pageNumberUl.onclick = (e) => {
+    console.log(Number(e.target.innerHTML));
+    page = Number(e.target.innerHTML);
+    loadData(page, orderValue,otherLimit);
+  }
 	// 首次加載立即執行
 	(function() {
-		loadData(page, orderValue, otherLimit);
+		loadData(page, orderValue,otherLimit);
 	})();
 </script>
