@@ -64,7 +64,7 @@ include find('./component/sidebar.php');
 							name="Name"
 							placeholder='請輸入名稱'
 							required
-							value='<?= isset ($_GET['sn']) ? $row['Name'] : "" ?>'
+							value='<?= isset($_GET['sn']) ? $row['Name'] : "" ?>'
 						>
 						<div
 							class="form-text"
