@@ -64,7 +64,7 @@ include find('./component/sidebar.php');
 							name="Name"
 							placeholder='請輸入名稱'
 							required
-							value='<?= isset($_GET['sn']) ? $row['Name'] : "" ?>'
+							value='<?= isset ($_GET['sn']) ? $row['Name'] : "" ?>'
 						>
 						<div
 							class="form-text"
@@ -144,9 +144,9 @@ include find('./component/sidebar.php');
 							type="submit"
 							class="btn btn-primary "
 							id="editFinsh"
-							onclick="event.preventDault, confirm=('您確定要新增該筆資料嗎?') && (location.href = index.href)"
-						><?= isset ($_GET['sn']) ? '資料送出' : '確定新增' ?></button>
-						<br />
+							onclick="event.preventDault(), confirm=('您確定要新增該筆資料嗎?') && (location.href = this.href)"
+						><?= isset ($_GET['sn']) ? '確定修改' : '確定新增' ?></button>
+						<!-- <br /> -->
 						<button
 							type="reset"
 							class="btn btn-danger  <?= isset ($_GET['sn']) ? 'd-none' : '' ?>"
@@ -213,7 +213,7 @@ include find('./component/sidebar.php');
 				// 如果有任一欄位為空，阻止表單提交
 				event.preventDefault();
 				// 請求用戶填寫所有必填欄位
-				alert("名稱和簡介欄位不得為空！");
+				alert("名稱、辨識碼、簡介欄位不得為空！");
 			}
 		});
 	});
