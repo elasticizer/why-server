@@ -5,7 +5,6 @@ require '../arranger.php';
 
 $page = $_GET['page'] ?? 1;
 $limitPerpage = $_GET['limitPerpage'] ?? 10;
-$start = $limitPerpage * ($page - 1);
 $columnsName = [
 	'編號',
 	'標題',
@@ -18,12 +17,7 @@ $columnsName = [
 	'編輯',
 ];
 $orderValue = $_GET['orderValue'] ?? 'SN ASC';
-$query = sprintf("SELECT c1.SN, c1.Name, c1.ApproverSN, Intro, WhenApplied, WhenLaunched, Price, TeacherSN, u1.FirstName, u1.LastName
-FROM Course c1
-JOIN User u1 ON c1.teacherSN = u1.SN
-ORDER BY c1.%s
-LIMIT %d, %d", $orderValue, $start, $limitPerpage);
-$statement = connect()->query($query);
+$options = [5, 10, 20];
 
 include find('./component/sidebar.php');
 ?>
@@ -35,22 +29,33 @@ include find('./component/sidebar.php');
 			<div class="col-lg-12 d-flex align-items-stretch">
 				<div class="card w-100">
 					<div class="card-body p-4">
-						<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
+						<div class="p-2 rounded-4 py-2 hstack justify-content-between ">
+							<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
+							<a class="btn btn-primary" href="edit.php"><i data-feather="edit"></i>新增課程</a>
+						</div>
 						<!-- 排序 -->
-						<div class="hstack gap-3">
-							<div class="p-2 rounded-4 bg-white py-2 function-wrap hstack">
+						<div class="row">
+							<div class=" p-2 rounded-4 py-2 col-4 hstack">
 								<h5 class="m-0">共</h5>
 								<h5 id="totalRows" class="m-0"></h5>
 								<h5 class="text-nowrap m-0">筆/每頁顯示</h5>
-								<ul>
-									<?php $options = [5, 10, 20];
-									foreach ($options as $option) : ?>
-										<a href="?page=1&orderValue=<?= $orderValue ?>&limitPerpage=<?= $option ?>"><?= $option ?></a>
-									<?php endforeach; ?>
-								</ul>
+
+								<!-- <div class="btn-group btn-group-sm" role="group">
+									<button type="button" class="btn btn-outline-primary">Left</button>
+									<button type="button" class="btn btn-outline-primary">Middle</button>
+									<button type="button" class="btn btn-outline-primary">Right</button>
+								</div> -->
+								<form action="" name="limitPerpageForm">
+									<ul class="btn-group btn-group-sm m-0 mx-3 " role="group" id="limitPerpageUl">
+										<?php foreach ($options as $option) : ?>
+											<input type="radio" class="btn-check" name="limitPerpageVa" value="<?= $option ?>" id="<?= $option ?>" autocomplete="off">
+											<label class="btn btn-outline-primary" for="<?= $option ?>"><?= $option ?></label>
+										<?php endforeach; ?>
+									</ul>
+								</form>
 								<h5 class="m-0">筆</h5>
 							</div>
-							<div class="p-2 rounded-4 bg-white py-2 function-wrap hstack justify-content-center">
+							<div class=" p-2 rounded-4 py-2 col-4 ">
 								<h5 class="m-0 text-nowrap">排序方法</h5>
 
 								<select name="orderSelect" id="orderSelect" class="form-select w-50">
@@ -61,12 +66,40 @@ include find('./component/sidebar.php');
 									<?php endforeach; ?>
 								</select>
 							</div>
-							<div class="p-2 rounded-4 bg-white py-2 function-wrap">
-								<h5 class="m-0">顯示方式||篩選</h5>
+							<div class=" p-2 rounded-4 py-2 col-4">
+								<h5 class="m-0">篩選</h5>
+								<div class="hstack gap-5 ">
+									<div>
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox" value="1" id="defaultCheck1" name="filter">
+											<label class="form-check-label" for="defaultCheck1">
+												未審核
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox" value="2" id="defaultCheck1" name="filter">
+											<label class="form-check-label" for="defaultCheck1">
+												已審核
+											</label>
+										</div>
+									</div>
+									<div>
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox" value="3" id="defaultCheck1" name="filter">
+											<label class="form-check-label" for="defaultCheck1">
+												已上架
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox" value="4" id="defaultCheck1" name="filter">
+											<label class="form-check-label" for="defaultCheck1">
+												已審核未上架
+											</label>
+										</div>
+									</div>
+								</div>
 							</div>
-							<div class="p-2 rounded-4 bg-white py-2 function-wrap">
-								<a class="btn btn-primary" href="edit.php"><i data-feather="edit"></i>新增課程</a>
-							</div>
+
 						</div>
 						<div class="table-responsive">
 							<table class="table text-nowrap mb-0 align-middle">
@@ -78,30 +111,22 @@ include find('./component/sidebar.php');
 									</tr>
 								</thead>
 								<tbody>
-									<?php while ($row = $statement->fetch(PDO::FETCH_ASSOC)) : ?>
-										<tr>
-											<?php
-											$soldAmount = connect()->query(sprintf("SELECT * FROM OrderDetail  o1 where o1.CourseSN = %d", $row['SN']))->fetch(PDO::FETCH_NUM)[0] ?? 0;
 
-											// $promotionName = connect()->query(sprintf("SELECT p1.Name FROM Promotion p1 join Course c1 on c1.SN= p1.CourseSN where c1.SN =" . $row['SN'] . " && CURRENT_DATE() BETWEEN p1.WhenStarted AND p1.WhenEnded;"))->fetch(PDO::FETCH_ASSOC);
-											$row['promotionName'] = $promotionName ?? '無';
-											$states = (!empty($row['ApproverSN']) ? (!empty($row['WhenLaunched']) ? ['btn-dark', '<i data-feather="corner-right-down"></i>下架', '<span class="text-success" >已上架</span>'] : ['btn-warning', '<i data-feather=upload></i>上架', '已下架']) : ['btn-success', ' <i data-feather="check-circle"></i>核准', '<span class ="text-danger">未審核</span>']);
-											$orderedRoll = [$row['SN'], $row['Name'], $row['LastName'] . $row['FirstName'], $row['Price'], $states[2], $row['promotionName'], $soldAmount];
-
-											foreach ($orderedRoll as $td) : ?>
-												<td class="border-bottom-0 mb-0"><?= $td ?></td>
-											<?php endforeach;
-											?>
-											<td><a class="btn <?= $states[0] ?>" onclick="javascript:approveCourse('<?= $row['SN'] ?>', '<?= isset($row['ApproverSN']) ?: 0 ?>','<?= isset($row['WhenLaunched']) ?: 0 ?>')" data-bs-toggle="modal" data-bs-target='#approveModal'>
-													<!-- 按鈕文字 -->
-													<?= $states[1] ?>
-												</a></td>
-											<td class="border-bottom-0 mb-0"><a class="btn btn-primary" href="edit.php?courseID=<?= $row['SN'] ?>&page=<?= $page ?>&orderValue=<?= $orderValue ?>&limitPerpage=<?= $limitPerpage ?>"><i data-feather="edit"></i>編輯</a>
-											</td>
-										</tr>
-									<?php endwhile ?>
 								</tbody>
 							</table>
+							<!-- 選頁 -->
+							<nav class="d-flex gap-3 page-nav align-items-center">
+								<a id="previousPage" class="btn btn-primary rounded-5">
+									<button class="page-link">上一頁</button>
+								</a>
+								<ul class="pagination -sm m-0" id="pageNumber">
+								</ul>
+
+								<a class="btn btn-primary rounded-5" id="nextPage">
+									<button class="page-link ">下一頁</button>
+								</a>
+								<span>共<span id="totalPages"></span>頁</span>
+							</nav>
 						</div>
 					</div>
 				</div>
@@ -129,27 +154,125 @@ include find('./component/sidebar.php');
 </div>
 <!-- JS -->
 <script>
-	let orderEl = document.getElementById("orderSelect");
+	<?php if (isset($_GET['d'])) : ?>
+		alert('已刪除課程');
+		location = "?page=<?= $page ?>&orderValue=<?= $orderValue ?>&limitPerpage=<?= $limitPerpage ?>";
+	<?php endif; ?>
+
+
+	let page = <?= $page ?> || 1;
+
+	let otherLimit = document.getElementById("orderSelect");
 	let approveModal = document.getElementById('approveModal');
 	let approveBtn = document.getElementById('approveBtn');
 	let modalTitle = document.getElementById('modalTitle');
 	let modalBody = document.getElementById('modalBody');
+	let limitPerpage;
+	let totalPages;
+	let pageNumberUl = document.getElementById("pageNumber");
 
-	orderEl.onchange = (e) => {
-		location = `?page=1&orderValue=${orderEl.value}&limitPerpage=<?= $limitPerpage ?>`;
-		console.log(orderEl.value);
+
+
+
+	let loadData = (page, orderValue, otherLimit) => {
+		const FD = new FormData(document.limitPerpageForm);
+		let data = {
+			'page': page,
+			'orderValue': orderValue,
+			'otherLimit': otherLimit,
+		};
+		//兩個一起包起來
+		// FD.entries().forEach(v => {
+		// 	console.log(v);
+		// });
+		for (const pair of FD.entries()) {
+			data[pair[0]] = pair[1]; //左鍵右值丟進去，鍵仍是name
+		}
+		limitPerpage = (data['limitPerpageVa'] == undefined?5:data['limitPerpageVa']) ;
+		// console.log(data);
+
+		// 重置
+		tbody.innerHTML = '';
+		pageNumberUl.innerHTML = '';
+		previousPageBtn.classList.remove('disabled');
+		nextPageBtn.classList.remove('disabled');
+
+		fetch(`api/sort.php?`, {
+			method: "POST",
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data),
+		}).then((r) => {
+			return r.json();
+		}).then((output) => {
+
+
+			console.log(output);
+			totalPages = output['totalPages'];
+			totalPagesEL.innerText = output['totalPages'];
+			totalRowsEL.innerText = output['totalRows'];
+			output['rows'].forEach((v, i, r) => {
+				let approver = (v[4][2].includes('danger') ? 0 : 1);
+				let available = (v[4][2].includes('success') ? 1 : 0);
+				tbody.innerHTML += `<tr>
+				<?php for ($i = 0; $i < 7; $i++) : ?>
+					<td>
+					<?php if ($i!=4) : ?>
+					${v["<?= $i ?>"]}
+					<?php endif; ?>
+					<?php if ($i==4) : ?>
+					${v["<?= $i ?>"][2]}
+					<?php endif; ?>
+					</td>
+				<?php endfor; ?>
+				<td><a class = "btn ${v[4][0]}"
+			onclick = "javascript:approveCourse(${v[0]},${approver},${available})"
+			data-bs-toggle = "modal"
+			data-bs-target = '#approveModal'>
+			${v[4][1]}</a></td>
+			<td><a class="btn btn-primary" href="edit.php?courseID=${v[0]}&page=${page}&orderValue=${orderValue}&limitPerpage=${limitPerpage}"><i data-feather="edit"></i>編輯</a></td>
+			</tr>`;
+			});
+
+			if (page === 1) {
+				previousPageBtn.classList.add('disabled')
+			}
+			if (page === output['totalPages']) {
+				nextPageBtn.classList.add('disabled')
+			}
+			for (let i = page - 4; i <= page + 4; i++) {
+				if (i >= 1 && i <= output['totalPages']) {
+					if (i === page) {
+						pageNumberUl.innerHTML +=
+							`<li class = "page-item active" >
+          <a class = "page-link" >${i}</a> </li>`
+					} else {
+						pageNumberUl.innerHTML +=
+							`<li class = "page-item" >
+          <a class = "page-link" >${i}</a> </li>`
+					}
+				}
+
+			}
+
+
+
+		})
 	}
+
+
 
 	function approveCourse(id, approver, available) {
 		console.log(id, approver, available);
-		let queryString = `?courseID=${id}&page=<?= $page ?>&orderValue=<?= $orderValue ?>&limitPerpage=<?= $limitPerpage ?>`;
+		let queryString = `?courseID=${id}&page=${page}&orderValue=${orderValue}&limitPerpage=${limitPerpage}`;
 		let courseID = `課號 <span class="text-danger text-decoration-underline">${id}</span> ?`;
-		if (approver === '0') {
+		if (approver === 0) {
 			approveBtn.href = `api/approve.php${queryString}`; //跳轉到approve頁面
 			modalTitle.innerHTML = '是否核准課程';
 			modalBody.innerHTML = `操作不可逆。<br>確定核准課程 ${courseID}`;
 			approveBtn.innerHTML = '核准';
-		} else if (available !== '0') {
+		} else if (available != 0) {
 			approveBtn.href = `api/launch.php${queryString}`;
 			modalTitle.innerHTML = '是否下架課程';
 			modalBody.innerHTML = `確定下架課程  ${courseID}`;
@@ -161,11 +284,60 @@ include find('./component/sidebar.php');
 			approveBtn.innerHTML = '上架';
 		}
 	}
-	<?php
 
-	// const orderSelect = document.getElementById('orderSelect');
-	// orderSelect.onchange=(e)=>{
-	// 	orderSelect.value=
-	// }
-	?>
+
+	let tbody = document.querySelector('tbody');
+	let totalPagesEL = document.getElementById('totalPages');
+	let totalRowsEL = document.getElementById('totalRows');
+
+
+	let orderValueEl = document.getElementById("orderSelect");
+	let orderValue = "<?= $orderValue ?>" || 'SN ASC';
+
+
+
+	// orderValueEl.firstChild.checked = true;
+
+	orderValueEl.onchange = (e) => {
+		orderValue = orderValueEl.value;
+		// console.log(orderValueEl);
+		page = 1;
+		loadData(page, orderValue, otherLimit);
+	}
+
+	let limitPerpageUl = document.getElementById('limitPerpageUl');
+	// console.log(limitPerpageUl.children[0]);
+	limitPerpageUl.children[0].checked = true;
+
+	function delay(ms) {
+			return new Promise(r => setTimeout(r, ms));
+		}
+
+
+	limitPerpageUl.onclick = (e) => {
+		const selected = document.querySelector('input[name="limitPerpageVa"]:checked');
+			selected.onchange = (event) => {
+				page = 1;
+				loadData(page, orderValue, otherLimit);
+		}
+	}
+
+	let previousPageBtn = document.getElementById('previousPage');
+	let nextPageBtn = document.getElementById('nextPage');
+	previousPageBtn.onclick = (e) => {
+		if (page > 1) {
+			page--;
+			loadData(page, orderValue, limitPerpage, otherLimit);
+		}
+	};
+	nextPageBtn.onclick = (e) => {
+		if (page < totalPages) {
+			page++;
+			loadData(page, orderValue, limitPerpage, otherLimit);
+		}
+	};
+	// 首次加載立即執行
+	(function() {
+		loadData(page, orderValue, otherLimit);
+	})();
 </script>
