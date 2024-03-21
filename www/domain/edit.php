@@ -11,7 +11,6 @@ if (isset ($_GET['sn'])) {
 }
 ;
 
-
 include find('./component/sidebar.php');
 ?>
 
