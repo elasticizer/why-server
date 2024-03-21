@@ -89,7 +89,7 @@ include find('./component/sidebar.php');
 						><?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>
 						<div
 							class="form-text"
-							id="IntroFault"
+							id="IdentifierFault"
 						></div>
 					</div>
 					<div class="mb-3">
@@ -172,6 +172,9 @@ include find('./component/sidebar.php');
 	})
 	const IntroEl = document.getElementById('Intro');
 	const IntroFaultEl = document.getElementById('IntroFault');
+	const IdentifierEl = document.getElementById('Identifier');
+	const IdentifierFaultEl = document.getElementById('IdentifierFault');
+
 	IntroEl.addEventListener('input', function () {
 		if (IntroEl.value.length < 2) {
 			IntroEl.style.border = "2px solid red";
@@ -182,18 +185,30 @@ include find('./component/sidebar.php');
 			IntroFaultEl.textContent = '';
 		}
 	})
+	IdentifierEl.addEventListener('input', function () {
+		if (IdentifierEl.value.length < 2) {
+			IdentifierEl.style.border = "2px solid red";
+			IdentifierFaultEl.textContent = '請輸入2~10個字';
+			IdentifierFaultEl.style.color = "red";
+		} else {
+			IdentifierEl.style.border = "2px solid blue";
+			IdentifierFaultEl.textContent = '';
+		}
+	})
 	document.addEventListener("DOMContentLoaded", function () {
 		// 找到修改完成按鈕
 		var editFinishButton = document.getElementById("editFinsh");
 
 		// 添加點擊事件監聽器
 		editFinishButton.addEventListener("click", function (event) {
-			// 找到名稱和簡介欄位
+			// 找到名稱和辨識碼和簡介欄位
 			var nameField = document.getElementById("Name");
 			var introField = document.getElementById("Intro");
+			var IdentifierField = document.getElementById("Identifier");
+
 
 			// 檢查名稱和簡介欄位是否為空
-			if (nameField.value.trim() === "" || introField.value.trim() === "") {
+			if (nameField.value.trim() === "" || introField.value.trim() === "" || IdentifierField.value.trim() === "") {
 				// 如果有任一欄位為空，阻止表單提交
 				event.preventDefault();
 				// 請求用戶填寫所有必填欄位

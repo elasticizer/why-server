@@ -8,11 +8,11 @@ $page = $_GET['page'] ?? 1; //獲取頁數 ??是 三元運算子的:意思
 $table = 'Domain';
 $statement = connect()->prepare(
 	sprintf(
-		"SELECT COUNT(*) FROM %s WHERE {$table}.Identifier || {$table}.SN || {$table}.Name || {$table}.Intro LIKE ? ",
+		"SELECT COUNT(*) FROM %s WHERE Identifier LIKE ? OR Name LIKE ? OR Intro LIKE ?",
 		$table
 	)
 );
-$statement->execute(['%' . (($_GET['keyword']) ?? "") . '%']);
+$statement->execute([$holder = '%' . ($_GET['keyword'] ?? "") . '%', $holder, $holder]);
 $total = $statement->fetch(PDO::FETCH_NUM)[0]; //從直欄 0 開始，依照結果集中傳回的直欄號碼來傳回已編製索引的陣列。
 $limit = 10; //每頁10筆
 $pages = ceil($total / $limit);
@@ -27,14 +27,14 @@ $columns = [
 ];
 $statement = connect()->prepare(
 	sprintf(
-		"SELECT %s FROM %s JOIN Staff ON {$table}.CreatorSN = Staff.SN WHERE {$table}.Identifier || {$table}.SN || {$table}.Name || {$table}.Intro LIKE ? LIMIT ?, ?",
+		"SELECT %s FROM %s JOIN Staff ON {$table}.CreatorSN = Staff.SN WHERE Identifier LIKE ?OR Name LIKE ? OR Intro LIKE ? LIMIT ?, ?",
 
 		implode(', ', array_keys($columns)),
 		//implode('連接符號',陣列)，將陣列使用連結符號串成字串
 		$table
 	)
 );
-$statement->execute(['%' . (($_GET['keyword']) ?? "") . '%', $start, $limit]);
+$statement->execute([$holder, $holder, $holder, $start, $limit]);
 
 
 include find('./component/sidebar.php');
