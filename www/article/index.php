@@ -48,7 +48,7 @@ include find('./component/sidebar.php');
 						<!-- 查詢功能 -->
 
 						<form class="d-flex justify-content-between mb-3" method='GET' action='<?= $_SERVER['PHP_SELF'] ?>'>
-							<input type="text" name="keyword" placeholder="輸入名稱關鍵字" class="form-control me-3">
+							<input type="text" name="keyword" placeholder="輸入名稱關鍵字" class="form-control me-3" value="<?= $_GET['keyword'] ?? "" ?>">
 							<button type="submit" class="btn btn-primary">
 								<i data-feather="search"></i>
 							</button>
