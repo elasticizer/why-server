@@ -18,7 +18,7 @@ $limit = 10;
 $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 
-$columns = ['SN' => '序號', 'Identifier' => '辨識碼', 'Title' => '標題', 'AuthorSN' => '作者序號'];
+$columns = ['SN' => '序號', 'Identifier' => '識別碼', 'Title' => '標題', 'AuthorSN' => '作者序號'];
 
 $statement = connect()->prepare(
 	sprintf(

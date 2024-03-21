@@ -23,11 +23,11 @@ include find('./component/sidebar.php');
 			<div class="card-body">
 				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
 				<form name="form1" action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
-				<?php if(isset($_GET['sn'])): ?>
-				<div class="mb-3">
-						<label for="SN" class="form-label">SN</label>
-						<input type="text" class="form-control disabled" id="Identifier" name="SN" value="<?= isset($_GET['sn']) ? $row['SN'] : '' ?>" disabled>
-					</div>
+					<?php if (isset($_GET['sn'])) : ?>
+						<div class="mb-3">
+							<label for="SN" class="form-label">SN</label>
+							<input type="text" class="form-control disabled" id="Identifier" name="SN" value="<?= isset($_GET['sn']) ? $row['SN'] : '' ?>" disabled>
+						</div>
 					<?php endif ?>
 					<div class="mb-3">
 						<label for="Identifier" class="form-label">識別碼</label>
@@ -37,6 +37,12 @@ include find('./component/sidebar.php');
 						<label for="Title" class="form-label">標題</label>
 						<input type="text" class="form-control" id="Title" name='Title' value='<?= isset($_GET['sn']) ? $row['Title'] : "" ?>'>
 					</div>
+					<?php if (!isset($_GET['sn'])) : ?>
+						<div class="mb-3">
+							<label for="Content" class="form-label">內容</label>
+							<input type="text" class="form-control" id="Title" name='Content'>
+						</div>
+					<?php endif ?>
 					<?php if (isset($_GET['sn'])) : ?>
 						<div class="mb-3">
 							<label class="form-label">建立時間</label>
