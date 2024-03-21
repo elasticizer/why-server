@@ -86,7 +86,8 @@ include find('./component/sidebar.php');
 							minlength="2"
 							maxlength="10"
 							required
-						><?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>
+							value="<?= isset ($_GET['sn']) ? $row['Identifier'] : "" ?>"
+						>
 						<div
 							class="form-text"
 							id="IdentifierFault"
