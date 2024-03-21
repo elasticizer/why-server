@@ -103,12 +103,12 @@ include find('./component/sidebar.php');
 											<?php foreach ($row as $key => $value) : ?>
 												<td class="border-bottom-0 mb-0"><?= $key === 'Implicit' ? ($value === 1 ? '是' : '否') : $value ?></td>
 											<?php endforeach ?>
-											<td class="border-bottom-0 mb-0">
+											<td class="border-bottom-0 mb-0 text-center">
 												<a href="edit.php?sn=<?= $row['SN'] ?>" class="btn btn-info m-1">
 													<i data-feather="edit"></i>
 												</a>
 											</td>
-											<td class="border-bottom-0 mb-0">
+											<td class="border-bottom-0 mb-0 text-center">
 												<a href="delete.php?sn=<?= $row['SN'] ?>" class="btn btn-danger m-1" onclick="event.preventDefault(), confirm('是否確定刪除？') && (location.href = this.href)">
 													<i data-feather="trash-2"></i>
 												</a>
