@@ -14,6 +14,7 @@ $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 $columns = [
 	'C1.SN' => '序號',
+	'C1.Identifier' => '識別碼',
 	'C1.Name' => '分類名稱',
 	'C1.Intro' => '簡介',
 	'C1.Implicit' => '是否隱藏',

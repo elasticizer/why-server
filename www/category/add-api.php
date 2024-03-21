@@ -1,11 +1,10 @@
 <?php
-$layout = './layout/layout.php';
+
 require '../arranger.php';
 
 header('Location: index.php');
 
-if (!empty($_POST['name'])) {
-	$statement = connect()->prepare("INSERT INTO `Category` (`Name`, `Intro`,
-	`Implicit`,`ParentSN`,`CreatorSN`) VALUES (?, ?, ?, ?, 1)");
-	$statement->execute([$_POST['name'], $_POST['intro'], $_POST['checkbox'] === 'on' ? 1 : 0, $_POST['parent'],]);
+if (isset($_POST['identifier'], $_POST['name'], $_POST['intro'])) {
+	$statement = connect()->prepare("INSERT INTO `Category` (`Identifier`, `Name`, `Intro`, `Implicit`, `ParentSN`, `CreatorSN`) VALUES (?, ?, ?, ?, ?, -2)");
+	$statement->execute([$_POST['identifier'], $_POST['name'], $_POST['intro'], $_POST['checkbox'] ?? 0, $_POST['parent']]);
 }
