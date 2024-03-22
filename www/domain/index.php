@@ -23,8 +23,7 @@ $columns = [
 	'Name' => '名稱',
 	'Intro' => '簡介',
 	'FirstName' => '建立者',
-	'WhenLastEdited' => '最後編輯'
-];
+	];
 $statement = connect()->prepare(
 	sprintf(
 		"SELECT %s FROM %s JOIN Staff ON {$table}.CreatorSN = Staff.SN WHERE Identifier LIKE ?OR Name LIKE ? OR Intro LIKE ? LIMIT ?, ?",
