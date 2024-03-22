@@ -200,6 +200,7 @@ include find('./component/sidebar.php');
 			IdentifierFaultEl.textContent = '';
 		}
 	})
+
 	document.addEventListener("DOMContentLoaded", function () {
 		// 找到修改完成按鈕
 		var editFinishButton = document.getElementById("editFinsh");
@@ -225,8 +226,12 @@ include find('./component/sidebar.php');
 				event.preventDefault();
 				// 請求用戶填寫所有必填欄位
 				alert("名稱、辨識碼、簡介欄位不得為空！");
+			}else{
+				alert("資料送出成功");
 			}
 		});
 	});
+
+
 
 </script>
