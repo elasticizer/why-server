@@ -113,32 +113,36 @@ include find('./component/sidebar.php');
 							id="IntroFault"
 						></div>
 					</div>
-					<div class="mb-3 <?= isset ($_GET['sn']) ? '' : 'd-none' ?>">
-						<label
-							for="datetime"
-							class="form-label"
-						>建立時間</label>
-						<input
-							type="datetime"
-							class="form-control"
-							id="datetime"
-							disabled
-							value='<?= isset ($_GET['sn']) ? $row['WhenCreated'] : " " ?>'
-						>
-					</div>
-					<div class="mb-3 <?= isset ($_GET['sn']) ? '' : 'd-none' ?>">
-						<label
-							for="datetime"
-							class="form-label"
-						>最後編輯時間</label>
-						<input
-							type="datetime"
-							class="form-control"
-							id="datetime"
-							disabled
-							value='<?= isset ($_GET['sn']) ? $row['WhenLastEdited'] : " " ?>'
-						>
-					</div>
+					<?php if (isset ($_GET['sn'])): ?>
+						<div class="mb-3">
+							<label
+								for="whenCreated"
+								class="form-label"
+							>建立時間</label>
+							<input
+								type="text"
+								class="form-control"
+								id="whenCreated"
+								name="whenCreated"
+								value="<?= localize($row['WhenCreated']) ?>"
+								disabled
+							>
+						</div>
+						<div class="mb-3">
+							<label
+								for="whenLastEdited"
+								class="form-label"
+							>最後編輯時間</label>
+							<input
+								type="text"
+								class="form-control"
+								id="whenCreated"
+								name="whenLastEdited"
+								value="<?= localize($row['WhenLastEdited']) ?>"
+								disabled
+							>
+						</div>
+					<?php endif ?>
 					<div class="d-flex  justify-content-center">
 						<button
 							type="submit"
