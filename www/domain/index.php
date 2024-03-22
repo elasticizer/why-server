@@ -19,8 +19,8 @@ $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 $columns = [
 	"{$table}.SN" => '序號',
-	'Identifier' => '識別碼',
 	'Name' => '名稱',
+	'Identifier' => '識別碼',
 	'Intro' => '簡介',
 	'FirstName' => '建立者',
 	];
@@ -89,11 +89,11 @@ include find('./component/sidebar.php');
 						</section>
 						<!-- 列表 -->
 						<div class="table-responsive">
-							<table class="table table-sm table-striped table-hover text-nowrap mb-5 text-center align-middle">
-								<thead class="text-dark fs-4 border-bottom border border-2">
+							<table class="table table-sm table-striped table-hover text-nowrap mb-0  fw-semibold align-middle text-center">
+								<thead class="text-dark fs-4 border-bottom border border-2  ">
 									<tr>
 										<?php foreach (array_values($columns) as $column): ?>
-											<th class="border-bottom-0 fw-semibold mb-0 col-1.5"><?= $column ?></th>
+											<th class="border-bottom-0 fw-semibold mb-0 "><?= $column ?></th>
 										<?php endforeach ?>
 										<th class="border-bottom-0 fw-semibold mb-0 text-center col-1">編輯</th>
 										<th class="border-bottom-0 fw-semibold mb-0 text-center col-1">刪除</th>
