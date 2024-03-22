@@ -15,6 +15,12 @@ if (!empty($sn)) {
 include find('./component/sidebar.php');
 ?>
 
+<style>
+	.form-control:user-invalid {
+		border: 1px solid red;
+	}
+</style>
+
 <div class="body-wrapper">
 	<?php include find('./component/header.php') ?>
 
@@ -22,7 +28,7 @@ include find('./component/sidebar.php');
 		<div class="card">
 			<div class="card-body">
 				<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
-				<form name="form1" action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
+				<form id="form1" name="form1" action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
 					<?php if (isset($_GET['sn'])) : ?>
 						<div class="mb-3">
 							<label for="SN" class="form-label">SN</label>
@@ -31,16 +37,25 @@ include find('./component/sidebar.php');
 					<?php endif ?>
 					<div class="mb-3">
 						<label for="Identifier" class="form-label">識別碼</label>
-						<input type="text" class="form-control" id="Identifier" name='Identifier' value='<?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>'>
+						<input type="text" class="form-control" id="Identifier" name='Identifier' value='<?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>' required>
+						<div class="invalid-feedback">
+							請填入識別碼
+						</div>
 					</div>
 					<div class="mb-3">
 						<label for="Title" class="form-label">標題</label>
-						<input type="text" class="form-control" id="Title" name='Title' value='<?= isset($_GET['sn']) ? $row['Title'] : "" ?>'>
+						<input type="text" class="form-control" id="Title" name='Title' value='<?= isset($_GET['sn']) ? $row['Title'] : "" ?>' required>
+						<div class="invalid-feedback">
+							請填入標題
+						</div>
 					</div>
+
 					<?php if (!isset($_GET['sn'])) : ?>
 						<div class="mb-3">
 							<label for="Content" class="form-label">內容</label>
-							<input type="text" class="form-control" id="Title" name='Content'>
+							<textarea name="Content" id="Content" cols="30" rows="10" class="d-none"></textarea>
+							<div id="editor" style="height: 300px;">
+							</div>
 						</div>
 					<?php endif ?>
 					<?php if (isset($_GET['sn'])) : ?>
@@ -59,3 +74,75 @@ include find('./component/sidebar.php');
 		</div>
 	</div>
 </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.3/dist/quill.js"></script>
+<script>
+	const toolbarOptions = [
+		['bold', 'italic', 'underline', 'strike'], // toggled buttons
+		['blockquote', 'code-block'],
+		['link', 'image', 'video', 'formula'],
+
+		[{
+			'header': 1
+		}, {
+			'header': 2
+		}], // custom button values
+		[{
+			'list': 'ordered'
+		}, {
+			'list': 'bullet'
+		}, {
+			'list': 'check'
+		}],
+		[{
+			'script': 'sub'
+		}, {
+			'script': 'super'
+		}], // superscript/subscript
+		[{
+			'indent': '-1'
+		}, {
+			'indent': '+1'
+		}], // outdent/indent
+		[{
+			'direction': 'rtl'
+		}], // text direction
+
+		[{
+			'size': ['small', false, 'large', 'huge']
+		}], // custom dropdown
+		[{
+			'header': [1, 2, 3, 4, 5, 6, false]
+		}],
+
+		[{
+			'color': []
+		}, {
+			'background': []
+		}], // dropdown with defaults from theme
+		[{
+			'font': []
+		}],
+		[{
+			'align': []
+		}],
+
+		['clean'] // remove formatting button
+	];
+
+	const quill = new Quill('#editor', {
+		modules: {
+			toolbar: toolbarOptions
+		},
+		theme: 'snow'
+	});
+
+	const editor = document.querySelector('#editor');
+
+	document.getElementById('form1').addEventListener('submit', function() {
+		const editorContent = quill.root.innerHTML; // 使用 quill 而不是 editor.quill
+		const contentTextarea = document.getElementById('Content');
+		contentTextarea.value = editorContent; // Set Quill content to Content textarea value
+	});
+</script>
