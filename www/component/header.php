@@ -38,6 +38,7 @@ $list = [
 							class="rounded-circle"
 						>
 					</a>
+					<div class="h6 mb-0"><?= connect()->query("SELECT `FirstName` FROM `Staff` WHERE `SN` = {$_SESSION['sn']}")->fetchColumn() ?></div>
 					<div
 						class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
 						aria-labelledby="drop2"

@@ -1,6 +1,17 @@
 <?php
 
 ob_start();
+session_start();
+
+if (
+	$_SERVER['REQUEST_URI'] !== '/login.php'
+	&& !str_ends_with($_SERVER['REQUEST_URI'], 'api.php')
+	&& empty($_SESSION['sn'])
+) {
+	header('Location: /login.php');
+
+	exit;
+}
 
 function arrange() {
 	global $title;

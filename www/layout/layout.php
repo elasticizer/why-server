@@ -45,6 +45,15 @@
 					document.body.classList.add('ready')
 				)
 			);
+
+			if (location.pathname === '/login.php') return;
+
+			const channel = new BroadcastChannel('logout');
+
+			channel.addEventListener(
+				'message',
+				() => location.replace('/login.php')
+			);
 		})();
 	</script>
 	<script
