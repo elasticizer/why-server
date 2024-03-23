@@ -103,9 +103,9 @@ include find('./component/sidebar.php');
 							class="form-control"
 							id="Intro"
 							name="Intro"
-							placeholder="請輸入2~10個字"
+							placeholder="請輸入20個字以內"
 							minlength="2"
-							maxlength="10"
+							maxlength="20"
 							required
 						><?= isset ($_GET['sn']) ? $row['Intro'] : "" ?></textarea>
 						<div
@@ -181,13 +181,14 @@ include find('./component/sidebar.php');
 	const IdentifierFaultEl = document.getElementById('IdentifierFault');
 
 	IntroEl.addEventListener('input', function () {
-		if (IntroEl.value.length < 2) {
+		if (IntroEl.value.length < 3) {
 			IntroEl.style.border = "2px solid red";
-			IntroFaultEl.textContent = '請輸入2~10個字';
+			IntroFaultEl.textContent = '請輸入20個字以內';
 			IntroFaultEl.style.color = "red";
 		} else {
 			IntroEl.style.border = "2px solid blue";
 			IntroFaultEl.textContent = '';
+
 		}
 	})
 	IdentifierEl.addEventListener('input', function () {
