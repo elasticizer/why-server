@@ -38,7 +38,7 @@ function fetch($article) {
 		null,
 		'Name' => $data['ironman']['name'],
 		'Intro' => '',
-		'CreatorSN' => $user
+		'CreatorSN' => 0
 	]);
 	$article = write('Article', [
 		'Identifier' => $article,
@@ -70,7 +70,7 @@ function amass($user, $ironman) {
 		$json = file_get_contents($href);
 		$data = json_decode($json, true)['data'];
 
-		if (empty ($data['articles'])) {
+		if (!isset($data['articles'])) {
 			break;
 		}
 

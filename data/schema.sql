@@ -147,7 +147,7 @@ CREATE TABLE `Lesson` (
 	`ChapterSN` INTEGER NOT NULL REFERENCES `Chapter` (`SN`) /* 章節序號 */,
 	`VideoSN` INTEGER NOT NULL REFERENCES `File` (`SN`) /* 影片序號 */,
 
-	UNIQUE (`CourseSN`, `VideoSN`)
+	UNIQUE (`ChapterSN`, `VideoSN`)
 ) /* 單元 */;
 
 -- [x] Review
@@ -412,20 +412,20 @@ CREATE TABLE `Cart` (
 
 -- [ ] CollectedArticle
 DROP TABLE IF EXISTS `CollectedArticle`;
-CREATE TABLE `CollectorArticle` (
+CREATE TABLE `CollectedArticle` (
 	`UserSN` INTEGER NOT NULL REFERENCES `User` (`SN`) /* 使用者序號 */,
 	`ArticleSN` INTEGER NOT NULL REFERENCES `Article` (`SN`) /* 文章序號 */,
 
-	PRIMARY KEY (`CollectorSN`, `ArticleSN`)
+	PRIMARY KEY (`UserSN`, `ArticleSN`)
 ) /* 收藏文章 */;
 
 -- [ ] CollectedCourse
 DROP TABLE IF EXISTS `CollectedCourse`;
-CREATE TABLE `CollectorCourse` (
+CREATE TABLE `CollectedCourse` (
 	`UserSN` INTEGER NOT NULL REFERENCES `User` (`SN`) /* 使用者序號 */,
 	`CourseSN` INTEGER NOT NULL REFERENCES `Course` (`SN`) /* 課程序號 */,
 
-	PRIMARY KEY (`CollectorSN`, `CourseSN`)
+	PRIMARY KEY (`UserSN`, `CourseSN`)
 ) /* 收藏課程 */;
 
 -- [ ] StaffPermission

@@ -12,36 +12,37 @@ function connect(): PDO {
 		"sqlite:{$db}",
 		null,
 		null,
-		// [PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT]
+		[PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT]
 	);
 }
 
 function write($table, $data) {
-	$keys = array_keys($data);
 	$i = array_search(0, array_keys($data));
 	$data = array_filter($data, 'is_scalar');
-	$keys = array_chunk($keys, $i)[0];
-
+	$list = [
+		array_chunk(array_keys($data), $i)[0],
+		array_chunk($data, $i)[0]
+	];
 	$stmt = sprintf(
-		'INSERT INTO `%s` (`%s`) VALUES (%s) ON CONFLICT (`%s`) DO NOTHING',
+		'INSERT OR FAIL INTO `%s` (`%s`) VALUES (%s)',
 		$table,
 		implode('`,`', array_keys($data)),
 		implode(',', array_fill(0, count($data), '?')),
-		implode('`,`', $keys)
+		implode('`,`', $list[0])
 	);
 
 	connect()
 		->prepare($stmt)
-		->execute(array_values($data));
+		?->execute(array_map('trim', array_values($data)));
 
 	$stmt = sprintf(
 		'SELECT * FROM `%s` WHERE `%s` = ?',
 		$table,
-		array_key_first($data)
+		implode('` = ? AND `', $list[0])
 	);
 
 	($sth = connect()->prepare($stmt))
-		->execute([$data[array_key_first($data)]]);
+		->execute($list[1]);
 
 	return $sth->fetchColumn();
 }

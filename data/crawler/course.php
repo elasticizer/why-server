@@ -74,7 +74,7 @@ function fetch($course) {
 		'Price' => $data['price'],
 		'WhenCreated' => date('Y-m-d H:i:s', strtotime($data['createdAt'] ?? time())),
 		'WhenApproved' => date('Y-m-d H:i:s', strtotime($data['incubateTime'] ?? time())),
-		'WhenLaunched' => empty ($data['publishTime'])
+		'WhenLaunched' => !isset($data['publishTime'])
 			? null
 			: date('Y-m-d H:i:s', strtotime($data['publishTime'] ?? time())),
 		'TeacherSN' => $user,
