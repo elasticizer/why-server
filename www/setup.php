@@ -1,12 +1,22 @@
 <?php
 
-$title = '登入系統';
+$title = '啟用帳戶';
 $layout = './layout/layout.php';
 
 require './arranger.php';
 
-if (isset($_SESSION['sn'])) {
-	header('Location: /index.php');
+if (
+	!isset($_GET['token'], $_SESSION['token'])
+	|| $_GET['token'] !== $_SESSION['token']
+) {
+	echo <<< END
+		<script>
+			(function () {
+				alert('連結已失效，請重新申請。');
+				location.replace('/login.php');
+			})();
+		</script>
+		END;
 
 	exit;
 }
@@ -19,7 +29,10 @@ if (isset($_SESSION['sn'])) {
 			<div class="col-md-8 col-lg-6 col-xxl-3">
 				<div class="card mb-0">
 					<div class="card-body">
-						<form>
+						<form
+							action="activate.php"
+							method="POST"
+						>
 							<div class="text-nowrap text-center mb-3">
 								<svg
 									width="16"
@@ -46,20 +59,6 @@ if (isset($_SESSION['sn'])) {
 							</div>
 							<div class="mb-3">
 								<label
-									for="username"
-									class="form-label"
-								>使用者名稱或電子信箱地址</label>
-								<input
-									type="text"
-									class="form-control"
-									name="username"
-									required
-									autofocus
-								/>
-								<div class="invalid-feedback">帳戶不存在</div>
-							</div>
-							<div class="collapse">
-								<label
 									for="password"
 									class="form-label"
 								>密碼</label>
@@ -67,17 +66,29 @@ if (isset($_SESSION['sn'])) {
 									type="password"
 									class="form-control"
 									name="password"
-									disabled
 									required
 								/>
-								<div class="invalid-feedback">密碼不正確</div>
+								<div class="invalid-feedback">密碼不安全（長度必須大於 16 字元）</div>
+							</div>
+							<div class="mb-4">
+								<input
+									type="password"
+									class="form-control"
+									required
+								/>
+								<div class="invalid-feedback">密碼不一致</div>
 							</div>
 							<div>
+								<input
+									type="hidden"
+									name="token"
+									value="<?= $_GET['token'] ?>"
+								/>
 								<button
 									type="button"
 									class="btn btn-primary w-100 py-8 fs-4 rounded-2"
 									disabled
-								>登入</button>
+								>送出</button>
 							</div>
 						</form>
 					</div>
@@ -87,101 +98,44 @@ if (isset($_SESSION['sn'])) {
 	</div>
 </div>
 
-<div
-	class="modal fade"
-	id="dialog"
-	tabindex="-1"
->
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h1 class="modal-title fs-5"></h1>
-				<button
-					type="button"
-					class="btn-close"
-					data-bs-dismiss="modal"
-				></button>
-			</div>
-			<div class="modal-body"></div>
-			<div class="modal-footer">
-				<button
-					type="button"
-					class="btn btn-primary"
-					data-bs-dismiss="modal"
-				>確定</button>
-			</div>
-		</div>
-	</div>
-</div>
-
 <script>
-	(function () {
+	(function (validate) {
 		const form = document.forms[0];
-		const button = form.elements[2];
-		const dialog = document.getElementById('dialog');
+		const button = form.elements[3];
 
 		form.addEventListener(
 			'keyup',
 			e => e.key === 'Enter' && button.click()
 		);
-		form.addEventListener('input', recover);
-		button.addEventListener('click', validate);
+		form.addEventListener('input', validate);
+		button.addEventListener('click', submit);
 
-		function recover(e) {
-			e.target.removeAttribute('pattern');
-			this.classList.remove('was-validated');
+		function validate(e) {
+			let field;
+
+			this.classList.add('was-validated');
+			this.elements[0].removeAttribute('pattern');
+			this.elements[1].removeAttribute('pattern');
+
+			if (this.elements[0].value.length < 16) {
+				this.elements[0].pattern = '';
+			}
+
+			if (this.elements[0].value !== this.elements[1].value) {
+				this.elements[1].pattern = '';
+			}
 
 			return button.disabled = !this.checkValidity();
 		}
 
-		async function validate() {
+		function submit() {
+			const form = this.form;
+
 			if (!form.reportValidity()) {
 				return;
 			}
 
-			const init = {
-				method: 'POST',
-				body: new URLSearchParams(new FormData(form))
-			};
-			const data = await fetch('login-api.php', init).then(
-				r => r.json(),
-				message => ({ summary: '', message })
-			);
-
-			if (data.code === '0000') {
-				return location.replace('/');
-			}
-
-			button.disabled = true;
-
-			if (data.code === '0001') {
-				form.elements[0].pattern = '';
-
-				return form.classList.add('was-validated');
-			}
-
-			if (data.code === '0002') {
-				form.elements[0].readOnly = true;
-				form.elements[1].disabled = false;
-
-				new bootstrap.Collapse(form.children[2]).show();
-
-				form.elements[1].focus();
-				form.children[2].classList.add('mb-4');
-
-				return form.classList.remove('was-validated');
-			}
-
-			if (data.code === '0004') {
-				form.elements[1].pattern = '';
-
-				return form.classList.add('was-validated');
-			}
-
-			dialog.getElementsByTagName('h1')[0].textContent = data.summary;
-			dialog.getElementsByClassName('modal-body')[0].textContent = data.message;
-
-			new bootstrap.Modal(dialog).show();
+			form.submit();
 		}
 	})();
 </script>

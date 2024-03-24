@@ -1,9 +1,12 @@
 <?php
-$title = '登入';
+
+$title = '首頁';
 $layout = './layout/layout.php';
 
 require './arranger.php';
+
 include find('./component/sidebar.php');
+
 ?>
 
 <div class="body-wrapper">

@@ -12,14 +12,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	]);
 }
 
-if (empty ($_POST['username'])) {
+if (!isset($_POST['username'])) {
 	respond(400, [
 		'summary' => '欄位未提供',
 		'message' => '請再試一次。'
 	]);
 }
 
-$statement = connect()->prepare('SELECT * FROM `Staff` WHERE `Username` = ? OR `E-mail` = ?');
+$statement = connect()->prepare(
+	'SELECT * FROM Staff WHERE Username = ? OR `E-mail` = ?'
+);
 $statement->execute([$_POST['username'], $_POST['username']]);
 
 $row = $statement->fetch();
@@ -32,7 +34,7 @@ if (!$row) {
 	]);
 }
 
-if (isset ($row['WhenDeactivated'])) {
+if (isset($row['WhenDeactivated'])) {
 	respond(403, [
 		'code' => '0005',
 		'summary' => '帳戶已停用',
@@ -41,6 +43,19 @@ if (isset ($row['WhenDeactivated'])) {
 }
 
 if (is_null($row['PasswordHash'])) {
+	pclose(
+		popen(
+			sprintf(
+				'sh -c "php ./mailer.php %s %s &"',
+				$row['E-mail'],
+				$_SESSION['token'] = bin2hex(random_bytes(16))
+			),
+			'r'
+		)
+	);
+
+	$_SESSION['username'] = $row['Username'];
+
 	respond(200, [
 		'code' => '0003',
 		'summary' => '帳戶未啟用',
@@ -48,7 +63,7 @@ if (is_null($row['PasswordHash'])) {
 	]);
 }
 
-if (!isset ($_POST['password'])) {
+if (!isset($_POST['password'])) {
 	respond(200, [
 		'code' => '0002',
 		'summary' => '帳戶已啟用',
@@ -66,14 +81,6 @@ if (!password_verify($_POST['password'], $row['PasswordHash'])) {
 
 $_SESSION['sn'] = $row['SN'];
 
-respond(204);
-
-function respond(int $code, array $data = null) {
-	http_response_code($code);
-
-	if (isset ($data)) {
-		echo json_encode($data);
-	}
-
-	exit;
-}
+respond(200, [
+	'code' => '0000'
+]);

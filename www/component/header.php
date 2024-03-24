@@ -11,7 +11,6 @@ $list = [
 				<a
 					class="nav-link sidebartoggler nav-icon-hover"
 					id="headerCollapse"
-					href="javascript:void(0)"
 				>
 					<i data-feather="menu"></i>
 				</a>
@@ -23,26 +22,20 @@ $list = [
 		>
 			<ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
 				<li class="nav-item dropdown d-flex align-items-center">
-					<a
-						class="nav-link nav-icon-hover"
-						href="javascript:void(0)"
-						id="drop2"
-						data-bs-toggle="dropdown"
-						aria-expanded="false"
-					>
-						<img
-							src="https://cdn-icons-png.flaticon.com/512/2815/2815428.png"
-							alt=""
-							width="35"
-							height="35"
-							class="rounded-circle"
-						>
-					</a>
-					<div class="h6 mb-0"><?= connect()->query("SELECT `FirstName` FROM `Staff` WHERE `SN` = {$_SESSION['sn']}")->fetchColumn() ?></div>
 					<div
-						class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
-						aria-labelledby="drop2"
+						class="nav-link nav-icon-hover"
+						id="dropdown"
+						data-bs-toggle="dropdown"
+						role="button"
 					>
+						<i data-feather="user" class="icon"></i>
+					</div>
+					<div class="h6 mb-0" data-bs-toggle="dropdown" role="button">
+						<span><?= connect()->query(
+							"SELECT `FirstName` FROM `Staff` WHERE `SN` = {$_SESSION['sn']}"
+						)->fetchColumn() ?></span>
+					</div>
+					<div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up">
 						<div class="message-body">
 							<?php foreach ($list as $text => $href): ?>
 								<a

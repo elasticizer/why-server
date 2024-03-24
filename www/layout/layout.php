@@ -17,10 +17,26 @@
 			opacity: 1;
 			transition: opacity 0.5s;
 		}
+
+		.feather {
+			width: 16px;
+			height: 16px;
+		}
+
+		.icon {
+			width: 24px;
+			height: 24px;
+		}
+
+		.logo {
+			width: 32px;
+			height: 32px;
+			fill: #3f5faf;
+		}
 	</style>
 	<link
 		rel="stylesheet"
-		href="/css/styles.min.css"
+		href="/static/styles.min.css"
 	/>
 </head>
 
