@@ -23,9 +23,7 @@
 
 	"git.autofetch": true,
 	"git.autoStash": true,
-	"git.branchProtection": [
-		"main"
-	],
+	"git.branchProtection": ["main"],
 	"git.countBadge": "tracked",
 	"git.defaultBranchName": "main",
 	"git.postCommitCommand": "sync",
@@ -79,19 +77,5 @@
 	"todo-tree.general.showActivityBarBadge": true,
 	"todo-tree.regex.subTagRegex": "^<(.*)>",
 	"todo-tree.tree.groupedByTag": true,
-	"todo-tree.tree.scanMode": "workspace",
-	"sqltools.connections": [
-		{
-			"previewLimit": 50,
-			"driver": "SQLite",
-			"name": "Why",
-			"database": "C:\\Users\\chun\\Desktop\\why.db"
-		},
-		{
-			"previewLimit": 50,
-			"driver": "SQLite",
-			"name": "why",
-			"database": "${workspaceFolder:why-server}/data/why.db"
-		}
-	]
+	"todo-tree.tree.scanMode": "workspace"
 }

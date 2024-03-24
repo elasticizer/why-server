@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_圖層_1" data-name="圖層 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 338.94 338.94">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke: url(#_未命名漸層_45);
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        fill: none;
+        stroke-linecap: round;
+        stroke-miterlimit: 10;
+        stroke-width: 35px;
+      }
+
+      .cls-2 {
+        stroke: url(#_未命名漸層_45-2);
+      }
+
+      .cls-3 {
+        stroke: url(#_未命名漸層_45-3);
+      }
+    </style>
+    <linearGradient id="_未命名漸層_45" data-name="未命名漸層 45" x1="30.82" y1="271.35" x2="84.57" y2="271.35" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0b9a94"/>
+      <stop offset=".37" stop-color="#0d9a9b"/>
+      <stop offset=".91" stop-color="#149aaf"/>
+      <stop offset="1" stop-color="#169ab3"/>
+    </linearGradient>
+    <linearGradient id="_未命名漸層_45-2" data-name="未命名漸層 45" x1="0" y1="169.47" x2="338.94" y2="169.47" xlink:href="#_未命名漸層_45"/>
+    <linearGradient id="_未命名漸層_45-3" data-name="未命名漸層 45" x1="98.05" y1="176.22" x2="245.93" y2="176.22" xlink:href="#_未命名漸層_45"/>
+  </defs>
+  <path class="cls-1" d="M67.07,282.98c-7.38-6.88-13.72-14.7-18.76-23.26"/>
+  <path class="cls-2" d="M24.33,214.66c-4.44-14.28-6.83-29.45-6.83-45.19C17.5,85.54,85.54,17.5,169.47,17.5s151.97,68.04,151.97,151.97-68.04,151.97-151.97,151.97"/>
+  <path class="cls-3" d="M162.77,275.98l.62-50.66,1.71-4.61,47.01-48.11c10.1-10.2,16.33-24.22,16.33-39.71,0-31.17-25.27-56.44-56.44-56.44s-56.44,25.27-56.44,56.44"/>
+</svg>
