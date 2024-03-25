@@ -29,4 +29,8 @@ if (!empty($_SERVER['HTTP_REFERER'])) {
 	$REFERER = explode('?',$_SERVER['HTTP_REFERER']);
     $backTo = $REFERER[0].$backTo;
 }
-header("Location: $backTo");
+if (strpos($_SERVER['HTTP_REFERER'], 'edit') !== false) {
+	header("Location: $backTo" . '&courseID=' . $courseID);
+} else {
+	header("Location: $backTo");
+}

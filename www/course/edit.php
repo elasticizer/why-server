@@ -5,7 +5,7 @@ $layout = './layout/layout.php';
 
 $page = $_GET['page'] ?? 1;
 $orderValue = $_GET['orderValue'] ?? 'SN ASC';
-$limitPerpage = $_GET['limitPerpage'] ?? 10;
+$limitPerpage = $_GET['limitPerpage'] ?? 5;
 $courseID = $_GET['courseID'] ?? 0;
 
 require '../arranger.php';
@@ -16,13 +16,17 @@ $allTeachers = connect()->query('SELECT Nickname,SN FROM `User` WHERE WhenQualif
 $r = connect()->query("SELECT * FROM Course WHERE SN= $courseID")->fetch(PDO::FETCH_ASSOC);
 if (!empty($r['ThumbnailSN'])) {
 	$r_file = connect()->query("select Filename,Extension from File where SN =" . $r['ThumbnailSN'])->fetch(PDO::FETCH_ASSOC);
-	$file_path = $r_file['Filename'] . $r_file['Extension'];
-	$file_content = file_get_contents(__DIR__ . "/api/files/$file_path");
-	$base64_file = base64_encode($file_content); //icacls "C:\xampp\htdocs\why\why-server\www\course\api\files" /grant BUILTIN\Users:(OI)(CI)(M) /T
-
+	if (strpos($r_file['Filename'], 'https:') !== false) {
+		$file_path = $r_file['Filename'];
+	} else {
+		$file_path = $r_file['Filename'] . $r_file['Extension'];
+		$file_content = file_get_contents(__DIR__ . "/api/files/$file_path");
+		$base64_file = base64_encode($file_content);
+	} //icacls "C:\xampp\htdocs\why\why-server\www\course\api\files" /grant BUILTIN\Users:(OI)(CI)(M) /T
 }
 
-$states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark', '<i data-feather="corner-right-down"></i>下架', '<span class="text-success" >已上架</span>'] : ['btn-warning', '<i data-feather=upload></i>上架', '已下架']) : ['btn-success', ' <i data-feather="check-circle"></i>核准', '<span class ="text-danger">未審核</span>']);
+
+$states = (isset($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark', '<i data-feather="corner-right-down"></i>下架', '<span class="text-success" >已上架</span>'] : ['btn-warning', '<i data-feather=upload></i>上架', '已下架']) : ['btn-success', ' <i data-feather="check-circle"></i>核准', '<span class ="text-danger">未審核</span>']);
 
 ?>
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.3/dist/quill.snow.css" rel="stylesheet" />
@@ -47,7 +51,7 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 						<a class="btn btn-danger text-nowrap btn-lg" data-bs-toggle="modal" data-bs-target='#approveModal' onclick="javascript:deleteCourse(<?= $r['SN'] ?>)"><i data-feather=upload></i>刪除課程</a>
 						<a class="btn btn-primary  text-nowrap btn-lg"><i data-feather=upload></i>促銷</a>
 						<!-- Button trigger modal -->
-						<a class="btn btn-lg text-nowrap <?= $states[0] ?> " onclick="javascript:approveCourse('<?= $r['SN'] ?>', '<?= isset($r['ApproverSN']) ?: 0 ?>','<?= isset($r['WhenLaunched']) ?: 0 ?>')" data-bs-toggle="modal" data-bs-target="#approveModal"><?= $states[1] ?>
+						<a class="btn btn-lg text-nowrap <?= $states[0] ?>" onclick="javascript:approveCourse('<?= $r['SN'] ?>','<?= isset($r['ApproverSN'])?:0 ?>','<?= isset($r['WhenLaunched']) ?: 0 ?>')" data-bs-toggle="modal" data-bs-target="#approveModal"><?= $states[1] ?>
 						</a>
 					<?php endif; ?>
 				</div>
@@ -62,8 +66,8 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 					<div class="mb-3">
 						<label for="Name" class="form-label">標題</label>
 						<input type="text" class="form-control" id="Name" name="Name" value="<?php if ($courseID != 0) {
-																																										echo $r['Name'];
-																																									} ?>">
+																									echo $r['Name'];
+																								} ?>">
 						<div class="form-text text-danger d-none">請輸入標題</div>
 					</div>
 					<div class="mb-3">
@@ -94,8 +98,8 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 					<div class="mb-3">
 						<label for="Intro" class="form-label">簡介</label>
 						<textarea type="text" class="form-control" id="Intro" name="Intro" rows="3"><?php if ($courseID != 0) {
-																																													echo $r['Intro'];
-																																												} ?></textarea>
+																										echo $r['Intro'];
+																									} ?></textarea>
 						<div class="form-text text-danger d-none">請輸入簡介</div>
 
 					</div>
@@ -103,8 +107,8 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 					<div class="mb-3">
 						<label for="Price" class="form-label">價格</label>
 						<input type="number" class="form-control" id="Price" name="Price" value="<?php if ($courseID != 0) {
-																																												echo $r['Price'];
-																																											}; ?>">
+																										echo $r['Price'];
+																									}; ?>">
 						<div class="form-text text-danger d-none">請輸入價格</div>
 
 					</div>
@@ -129,8 +133,12 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 
 					<div><!-- 空的img或原始圖片-->
 						<img class="mb-3" src="<?php if ($courseID != 0) {
-																			echo ('data:image/jpeg;base64,' . $base64_file);
-																		} ?>" alt="" id="myimg" width="100%" />
+													if (strpos($r_file['Filename'], 'https:') !== false) {
+														echo $file_path;
+													} else {
+														echo ('data:image/jpeg;base64,' . $base64_file);
+													}
+												} ?>" alt="" id="myimg" width="100%" />
 					</div>
 					<div class="mb-3">
 						<label for="Syllabus" class="form-label">課綱</label>
@@ -140,8 +148,8 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 						<?php endif; ?>
 
 						<div id="editor" class="<?php if ($courseID != 0) {
-																			echo "d-none";
-																		} ?>">
+													echo "d-none";
+												} ?>">
 						</div>
 						<textarea type="text" class="form-control" id="Syllabus" name="Syllabus" cols="30" rows="10" hidden></textarea>
 						<div class="form-text text-danger d-none">請輸入課綱</div>
@@ -310,6 +318,12 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 				.then((result) => {
 					if (result.success) {
 						alert('已修改課程');
+						window.scroll({
+							top: 0,
+							left: 0,
+							behavior: 'smooth'
+						});
+
 					} else {
 						alert("修改失敗");
 					}
@@ -369,7 +383,7 @@ $states = (!empty($r['ApproverSN']) ? (!empty($r['WhenLaunched']) ? ['btn-dark',
 			modalTitle.innerHTML = '是否核准課程';
 			modalBody.innerHTML = `操作不可逆。<br>確定核准課程 ${courseID}`;
 			approveBtn.innerHTML = '核准';
-		} else if (available !== '0') {
+		} else if (available != 0) {
 			approveBtn.href = `api/launch.php${queryString}`;
 			modalTitle.innerHTML = '是否下架課程';
 			modalBody.innerHTML = `確定下架課程  ${courseID}`;
