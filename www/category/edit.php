@@ -120,6 +120,7 @@ include find('./component/sidebar.php');
 			return;
 		}
 
+		this.pattern = '';
 		this.parentNode.classList.add('was-validated');
 	}
 </script>
