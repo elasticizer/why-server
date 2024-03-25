@@ -34,7 +34,7 @@ include find('./component/sidebar.php');
 					</div>
 					<div class="mb-3">
 						<label for="identifier" class="form-label">識別碼</label>
-						<input type="text" class="form-control" id="identifier" name="identifier" value="<?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>" required pattern oninput="this.parentNode.classList.remove('was-validated')">
+						<input type="text" class="form-control" id="identifier" name="identifier" value="<?= isset($_GET['sn']) ? $row['Identifier'] : "" ?>" required oninput="this.removeAttribute('pattern'), this.parentNode.classList.remove('was-validated')">
 						<div class="invalid-feedback">識別碼重複了</div>
 					</div>
 					<div class="mb-3">
@@ -120,6 +120,7 @@ include find('./component/sidebar.php');
 			return;
 		}
 
+		this.pattern = '';
 		this.parentNode.classList.add('was-validated');
 	}
 </script>
