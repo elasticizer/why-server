@@ -231,7 +231,8 @@ include find('./component/sidebar.php');
 				alert("資料送出成功");
 			}
 		});
-	});
+	})
+});
 
 
 
