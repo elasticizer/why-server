@@ -103,9 +103,9 @@ include find('./component/sidebar.php');
 							class="form-control"
 							id="Intro"
 							name="Intro"
-							placeholder="請輸入2~10個字"
+							placeholder="請輸入20個字以內"
 							minlength="2"
-							maxlength="10"
+							maxlength="20"
 							required
 						><?= isset ($_GET['sn']) ? $row['Intro'] : "" ?></textarea>
 						<div
@@ -113,32 +113,36 @@ include find('./component/sidebar.php');
 							id="IntroFault"
 						></div>
 					</div>
-					<div class="mb-3 <?= isset ($_GET['sn']) ? '' : 'd-none' ?>">
-						<label
-							for="datetime"
-							class="form-label"
-						>建立時間</label>
-						<input
-							type="datetime"
-							class="form-control"
-							id="datetime"
-							disabled
-							value='<?= isset ($_GET['sn']) ? $row['WhenCreated'] : " " ?>'
-						>
-					</div>
-					<div class="mb-3 <?= isset ($_GET['sn']) ? '' : 'd-none' ?>">
-						<label
-							for="datetime"
-							class="form-label"
-						>最後編輯時間</label>
-						<input
-							type="datetime"
-							class="form-control"
-							id="datetime"
-							disabled
-							value='<?= isset ($_GET['sn']) ? $row['WhenLastEdited'] : " " ?>'
-						>
-					</div>
+					<?php if (isset ($_GET['sn'])): ?>
+						<div class="mb-3">
+							<label
+								for="whenCreated"
+								class="form-label"
+							>建立時間</label>
+							<input
+								type="text"
+								class="form-control"
+								id="whenCreated"
+								name="whenCreated"
+								value="<?= localize($row['WhenCreated']) ?>"
+								disabled
+							>
+						</div>
+						<div class="mb-3">
+							<label
+								for="whenLastEdited"
+								class="form-label"
+							>最後編輯時間</label>
+							<input
+								type="text"
+								class="form-control"
+								id="whenCreated"
+								name="whenLastEdited"
+								value="<?= localize($row['WhenLastEdited']) ?>"
+								disabled
+							>
+						</div>
+					<?php endif ?>
 					<div class="d-flex  justify-content-center">
 						<button
 							type="submit"
@@ -177,13 +181,14 @@ include find('./component/sidebar.php');
 	const IdentifierFaultEl = document.getElementById('IdentifierFault');
 
 	IntroEl.addEventListener('input', function () {
-		if (IntroEl.value.length < 2) {
+		if (IntroEl.value.length < 3) {
 			IntroEl.style.border = "2px solid red";
-			IntroFaultEl.textContent = '請輸入2~10個字';
+			IntroFaultEl.textContent = '請輸入20個字以內';
 			IntroFaultEl.style.color = "red";
 		} else {
 			IntroEl.style.border = "2px solid blue";
 			IntroFaultEl.textContent = '';
+
 		}
 	})
 	IdentifierEl.addEventListener('input', function () {
@@ -196,6 +201,7 @@ include find('./component/sidebar.php');
 			IdentifierFaultEl.textContent = '';
 		}
 	})
+
 	document.addEventListener("DOMContentLoaded", function () {
 		// 找到修改完成按鈕
 		var editFinishButton = document.getElementById("editFinsh");
@@ -207,15 +213,27 @@ include find('./component/sidebar.php');
 			var introField = document.getElementById("Intro");
 			var IdentifierField = document.getElementById("Identifier");
 
+			// 添加點擊事件監聽器
+			editFinishButton.addEventListener("click", function (event) {
+				// 找到名稱和簡介欄位
+				var nameField = document.getElementById("Name");
+				var introField = document.getElementById("Intro");
+				var IdentifierField = document.getElementById("Identifier");
 
-			// 檢查名稱和簡介欄位是否為空
-			if (nameField.value.trim() === "" || introField.value.trim() === "" || IdentifierField.value.trim() === "") {
-				// 如果有任一欄位為空，阻止表單提交
-				event.preventDefault();
-				// 請求用戶填寫所有必填欄位
-				alert("名稱、辨識碼、簡介欄位不得為空！");
-			}
-		});
+
+				// 檢查名稱和簡介欄位是否為空
+				if (nameField.value.trim() === "" || introField.value.trim() === "" || IdentifierField.value.trim() === "") {
+					// 如果有任一欄位為空，阻止表單提交
+					event.preventDefault();
+					// 請求用戶填寫所有必填欄位
+					alert("名稱、辨識碼、簡介欄位不得為空！");
+				} else {
+					alert("資料送出成功");
+				}
+			});
+		})
 	});
+
+
 
 </script>
