@@ -29,7 +29,8 @@ if (!empty($_GET['ArticleSN'])) {
 						<label for="CategorySN" class="form-label">分類序號</label>
 						<input type="text" class="form-control" id="CategorySN" name="CategorySN" value='<?= isset($_GET['ArticleSN']) ? $row['CategorySN'] : "" ?>'>
 					</div>
-					
+
+
 
 					<button type="submit" class="btn btn-primary"><?= isset($_GET['ArticleSN']) ? '修改' : '提交表單' ?></button>
 				</form>
