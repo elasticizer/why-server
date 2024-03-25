@@ -31,18 +31,16 @@
 			fill: #3f5faf;
 		}
 	</style>
-	<link
-		rel="stylesheet"
-		href="/static/styles.min.css"
-	/>
+	<link rel="stylesheet" href="/static/styles.min.css" />
 </head>
 
 <body>
+	<link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.3/dist/quill.snow.css" rel="stylesheet">
 	<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
 		<?= $slot ?>
 	</div>
 	<script>
-		(function () {
+		(function() {
 			window.addEventListener(
 				'load',
 				() => (
@@ -61,21 +59,9 @@
 			);
 		})();
 	</script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"
-		integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-		crossorigin="anonymous"
-	></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-		crossorigin="anonymous"
-	></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.1/dist/feather.min.js"
-		integrity="sha256-574O2n8joB5Jz047l2w/vaIugl3n5cMowF2uy3dBFc0="
-		crossorigin="anonymous"
-	></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.1/dist/feather.min.js" integrity="sha256-574O2n8joB5Jz047l2w/vaIugl3n5cMowF2uy3dBFc0=" crossorigin="anonymous"></script>
 </body>
 
 </html>
