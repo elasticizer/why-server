@@ -5,6 +5,7 @@ $layout = './layout/layout.php';
 require '../arranger.php';
 include find('./component/sidebar.php');
 
+
 if (isset($_GET['sn'])) {
 	$statement = connect()->prepare("SELECT * FROM Coupon WHERE sn=?");
 	$statement->execute([$_GET['sn']]);
@@ -29,7 +30,7 @@ if (isset($_GET['sn'])) {
 					<h5 class="card-title fw-semibold mb-4"><?= $title ?></h5>
 					<a href="index.php" class="btn btn-primary m-1">回到列表頁</a>
 				</div>
-				<form action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST" id="form1">
+				<form id="form1" action="<?= isset($_GET['sn']) ? 'edit-api.php?sn=' . $_GET['sn'] : 'add-api.php' ?>" method="POST">
 					<!-- SN -->
 					<?php if (isset($_GET['sn'])) : ?>
 						<div class="mb-3">
@@ -78,23 +79,63 @@ if (isset($_GET['sn'])) {
 						</div>
 					<?php endif ?>
 					<!-- WhenEnded -->
+					<?php
+					$today = date("Y-m-d H:i:s");
+					$tomorrow = date("Y-m-d H:i:s", strtotime($today . ' +1 day'));
+					?>
 					<div class="mb-3">
 						<label for="WhenEnded" class="form-label">結束時間</label>
-						<?php
-						$today = date("Y-m-d H:i:s");
-						?>
-						<input type="datetime-local" class="form-control" id="WhenEnded" name="WhenEnded" value="<?= isset($_GET['sn']) ? $row['WhenEnded'] : $today ?>">
+						<input type="datetime-local" class="form-control" id="WhenEnded" name="WhenEnded" value="<?= isset($_GET['sn']) ? $row['WhenEnded'] : $tomorrow ?>">
 						<div class="form-text" id="whenEndedError"></div>
 					</div>
 					<button type="submit" class="btn btn-primary m-1"><?= isset($_GET['sn']) ? '確定修改' : '確定新增' ?></button>
+
 				</form>
 			</div>
 		</div>
 	</div>
 </div>
+<!-- 成功 Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5">成功</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="alert alert-success" role="alert">
+					<?= isset($_GET['sn']) ? '資料編輯成功' : '資料新增成功' ?>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a href="index.php" class="btn btn-primary">確定</a>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 失敗 Modal -->
+<div class="modal fade" id="failureModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5">失敗</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="alert alert-danger" role="alert">
+					<?= isset($_GET['sn']) ? '資料編輯失敗' : '資料新增失敗' ?>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a href="index.php" class="btn btn-primary">確定</a>
+			</div>
+		</div>
+	</div>
+</div>
 
+<!-- JS 檢查資料格式的樣式與提醒設定 -->
 <script>
-
 	document.addEventListener('DOMContentLoaded', () => {
 		const nameInput = document.getElementById('Name');
 		const nameError = document.getElementById('nameError');
@@ -108,9 +149,18 @@ if (isset($_GET['sn'])) {
 		const whenEndedInput = document.getElementById('WhenEnded');
 		const whenEndedError = document.getElementById('whenEndedError');
 
-		const form = document.getElementById('form1');
-		const successModal = document.getElementById('successModal');
-		const failureModal = document.getElementById('failureModal');
+		// identifier
+		identifierInput.addEventListener('input', () => {
+			if (identifierInput.value.length > 9 || identifierInput.value.length < 3) {
+				identifierError.textContent = '識別碼必須在三到九個字之間。';
+				identifierError.classList.add('isInvalid');
+				identifierInput.style.border = "1px solid red";
+			} else {
+				identifierError.textContent = '';
+				identifierError.classList.remove('isInvalid');
+				identifierInput.style.border = "1px solid #CCC";
+			}
+		});
 
 		// Name
 		nameInput.addEventListener('input', () => {
@@ -125,20 +175,6 @@ if (isset($_GET['sn'])) {
 			}
 		});
 
-		// identifier
-		identifierInput.addEventListener('input', () => {
-			if (identifierInput.value.length > 9) {
-				identifierError.textContent = '識別碼不可以超過九個字。';
-				identifierError.classList.add('isInvalid');
-				identifierInput.style.border = "1px solid red";
-			} else {
-				identifierError.textContent = '';
-				identifierError.classList.remove('isInvalid');
-				identifierInput.style.border = "1px solid #CCC";
-			}
-		});
-
-		// Explanation 可填可不填
 		// Discount
 		discountInput.addEventListener('input', function() {
 			const discount = parseInt(discountInput.value);
@@ -167,8 +203,92 @@ if (isset($_GET['sn'])) {
 				whenEndedInput.style.border = "1px solid #CCC";
 			}
 		});
-
-
-
 	})
+</script>
+
+<!-- JS 判斷是否有輸入值 成功或失敗會出現Modal -->
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const form1 = document.getElementById('form1');
+
+		const identifierField = document.getElementById('Identifier');
+		const nameField = document.getElementById('Name');
+		const discountRateField = document.getElementById('DiscountRate');
+		const whenEndedField = document.getElementById('WhenEnded');
+
+		form1.addEventListener('submit', function(event) {
+			identifierField.style.border = "1px solid #CCC";
+
+			nameField.style.border = "1px solid #CCC";
+
+			discountRateField.style.border = "1px solid #CCC";
+
+			whenEndedField.style.border = "1px solid #CCC";
+
+			event.preventDefault();
+
+			let isPass = true;
+
+			// TODO: 檢查資料的格式
+
+			if (identifierField.value.length > 9 || identifierField.value.length < 3) {
+				isPass = false;
+				identifierField.style.border = "1px solid red";
+			}
+			if (nameField.value.length < 3) {
+				isPass = false;
+				nameField.style.border = "1px solid red";
+			}
+
+			const discount = parseInt(discountRateField.value);
+			if (isNaN(discount) || discount % 10 !== 0 || discount < 10 || discount > 90) {
+				isPass = false;
+				discountRateField.style.border = "1px solid red";
+			}
+
+			const today = new Date();
+			const endDate = new Date(whenEndedField.value);
+			if (endDate <= today) {
+				isPass = false;
+				whenEndedField.style.border = "1px solid red";
+			}
+
+			if (isPass) {
+				const fd = new FormData(form1);
+
+				let apiURL = 'add-api.php';
+				if (form1.getAttribute('action').includes('edit-api.php')) {
+					apiURL = form1.getAttribute('action');
+				}
+
+				fetch(apiURL, {
+						method: 'POST',
+						body: fd
+					})
+					.then(r => r.json())
+					.then(result => {
+						console.log(result);
+						if (result.success) {
+							successModal.show();
+						} else {
+							if (result.error) {
+								failureInfo.innerHTML = result.error;
+							} else {
+								failureInfo.innerHTML = '資料新增沒有成功';
+							}
+							failureModal.show();
+						}
+					})
+					.catch(ex => {
+						console.log(ex);
+						failureInfo.innerHTML = '資料新增發生錯誤' + ex;
+						failureModal.show();
+					})
+			}
+		});
+
+		const successModal = new bootstrap.Modal('#successModal');
+		const failureModal = new bootstrap.Modal('#failureModal');
+		const failureInfo = document.querySelector('#failureModal .alert-danger');
+	});
 </script>

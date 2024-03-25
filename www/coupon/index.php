@@ -1,16 +1,15 @@
 <?php
-$title = '優惠券'; // 頁面標題
-$layout = './layout/layout.php'; // 頁面排版
+$title = '優惠券';
+$layout = './layout/layout.php';
 
 require '../arranger.php';
 
-// 計算優惠券的總數去做分頁功能
 $page = $_GET['page'] ?? 1;
 $table = 'Coupon';
 $statement = connect()->prepare("SELECT COUNT(*) FROM {$table} JOIN Staff ON {$table}.CreatorSN = Staff.SN WHERE {$table}.Name LIKE ?");
 $statement->execute(['%' . ($_GET['keyword'] ?? '') . '%']);
 $total = $statement->fetch(PDO::FETCH_NUM)[0];
-$limit = 10; // 每頁10筆
+$limit = 10;
 $pages = ceil($total / $limit);
 $start = $limit * ($page - 1);
 $sortValue = $_GET['sortValue'] ?? 'SN ASC'; // 排序
@@ -56,7 +55,7 @@ include find('./component/sidebar.php');
 						<!-- 搜尋功能 -->
 						<form action="<?= $_SERVER['PHP_SELF'] ?>" method="GET" id="searchForm"">
 							<div class=" input-group mb-3">
-							<input type="text" name="keyword" placeholder="請輸入欲查詢之優惠券" class="form-control" value="<?= $_GET['keyword'] ?? '' ?>">
+							<input type="text" name="keyword" placeholder="請輸入關鍵字" class="form-control" value="<?= $_GET['keyword'] ?? '' ?>">
 							<button class="btn btn-outline-primary" type="submit"><i data-feather="search"></i></button>
 					</div>
 					</form>
@@ -72,7 +71,7 @@ include find('./component/sidebar.php');
 								</li>
 								<?php for ($i = $page - 5; $i <= $page + 5; $i++) : ?>
 									<?php if ($i >= 1 and $i <= $pages) : ?>
-										<li class="page-item <?= $i === $page ? 'active' : '' ?>">
+										<li class="page-item <?= $i != $page ?: 'active' ?>">
 											<a class="page-link" href="?<?= http_build_query([...$_GET, 'page' => $i]) ?>"><?= $i ?></a>
 										</li>
 									<?php endif ?>
@@ -130,6 +129,7 @@ include find('./component/sidebar.php');
 		}
 	}
 
+	// 排序功能
 	function changeSort(select) {
 		var selectedSort = select.value;
 		var urlParams = new URLSearchParams(window.location.search);
